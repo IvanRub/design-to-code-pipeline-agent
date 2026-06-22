@@ -1,0 +1,334 @@
+/* KycVerificationWizard — all values reference tokens.json cssVar entries only */
+
+.root {
+  font-family: var(--font-family-sans);
+  background-color: var(--color-background-default);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  line-height: var(--font-line-height-normal);
+}
+
+/* ── Step Indicator ─────────────────────────────────────────────────────── */
+
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  list-style: none;
+  margin: 0 0 var(--space-6) 0;
+  padding: 0;
+  border-bottom: 1px solid var(--color-border-default);
+  padding-bottom: var(--space-4);
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  flex: 1;
+}
+
+.stepItem:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.stepItemCurrent {
+  color: var(--color-action-primary-default);
+  font-weight: var(--font-weight-medium);
+}
+
+.stepItemCompleted {
+  color: var(--color-feedback-success);
+}
+
+.stepNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid var(--color-border-default);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  flex-shrink: 0;
+}
+
+.stepItemCurrent .stepNumber {
+  background-color: var(--color-action-primary-default);
+  color: var(--color-text-on-action);
+  border-color: var(--color-action-primary-default);
+}
+
+.stepItemCompleted .stepNumber {
+  background-color: var(--color-feedback-success);
+  color: var(--color-text-on-action);
+  border-color: var(--color-feedback-success);
+}
+
+.stepLabel {
+  font-size: var(--font-size-sm);
+}
+
+/* ── Headings ───────────────────────────────────────────────────────────── */
+
+.stepHeading {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: var(--font-line-height-tight);
+  margin: 0 0 var(--space-5) 0;
+  /* tabIndex="-1" headings should not show a default focus ring; we add a subtle one */
+  outline: none;
+}
+
+.stepHeading:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Form ───────────────────────────────────────────────────────────────── */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+/* ── Navigation ─────────────────────────────────────────────────────────── */
+
+.navigation {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-default);
+}
+
+/* ── Document Upload / Drop Zone ────────────────────────────────────────── */
+
+.dropZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-8);
+  border: 2px dashed var(--color-border-default);
+  border-radius: var(--radius-md);
+  background-color: var(--color-background-subtle);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dropZone {
+    transition: none;
+  }
+}
+
+.dropZone:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.dropZoneDragOver {
+  border-color: var(--color-action-primary-default);
+  background-color: var(--color-background-subtle);
+  animation: highlightPulse 0.8s ease infinite alternate;
+}
+
+@keyframes highlightPulse {
+  from { border-color: var(--color-action-primary-default); }
+  to   { border-color: var(--color-action-primary-hover); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dropZoneDragOver {
+    animation: none;
+  }
+}
+
+.dropZoneUploading {
+  border-color: var(--color-action-primary-default);
+  background-color: var(--color-background-subtle);
+  cursor: not-allowed;
+}
+
+.dropZoneSuccess {
+  border-color: var(--color-feedback-success);
+  background-color: var(--color-background-subtle);
+}
+
+.dropZoneError {
+  border-color: var(--color-feedback-error);
+  background-color: var(--color-feedback-error-subtle);
+}
+
+.dropZoneDisabled {
+  border-color: var(--color-border-default);
+  background-color: var(--color-background-subtle);
+  cursor: not-allowed;
+  color: var(--color-text-secondary);
+}
+
+.uploadLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  text-align: center;
+}
+
+.uploadButtonText {
+  color: var(--color-action-primary-default);
+  font-weight: var(--font-weight-medium);
+  text-decoration: underline;
+}
+
+.uploadConstraints {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  text-align: center;
+}
+
+/* Visually hidden file input — still in DOM and accessible */
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Spinner Wrapper ────────────────────────────────────────────────────── */
+
+.spinnerWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-4);
+}
+
+/* ── Rejection Reason ───────────────────────────────────────────────────── */
+
+.rejectionReason {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  margin: var(--space-2) 0 0 0;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-feedback-error-subtle);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--color-feedback-error);
+  line-height: var(--font-line-height-normal);
+}
+
+/* ── Screen-reader only utility ─────────────────────────────────────────── */
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Drag copy (hidden at lg breakpoint per responsive spec) ────────────── */
+
+.dragCopy {
+  display: inline;
+}
+
+/* ── Focus ring for all interactive elements (SC 2.4.11) ───────────────── */
+
+:global(*:focus-visible) {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ── Responsive — sm (640px): full width, single column ─────────────────── */
+
+@media (max-width: 640px) {
+  .root {
+    padding: 0 var(--space-4);
+  }
+
+  .stepIndicator {
+    gap: var(--space-2);
+  }
+
+  .stepLabel {
+    display: none;
+  }
+
+  .fieldRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Responsive — md (768px): two-column fields collapse ────────────────── */
+
+@media (max-width: 768px) {
+  .fieldRow {
+    grid-template-columns: 1fr;
+  }
+
+  .root {
+    padding: 0 var(--space-6);
+  }
+}
+
+/* ── Responsive — lg (1024px): hide drag copy ──────────────────────────── */
+
+@media (max-width: 1024px) {
+  .dragCopy {
+    display: none;
+  }
+}
+
+/* ── Responsive — xl (1280px): step labels truncate ────────────────────── */
+
+@media (max-width: 1280px) {
+  .stepLabel {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: var(--space-10);
+  }
+}
+
+/* ── Reduced motion global override ────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  :global(*) {
+    animation-duration: 0ms !important;
+    transition-duration: 0ms !important;
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$meta": {
+    "name": "Acme Fintech Component Catalog",
+    "note": "Existing reusable components. Generators MUST compose these instead of re-implementing primitives. Importing a component not listed here is a hallucination."
+  },
+  "components": [
+    { "name": "Button",    "import": "@acme/ui",        "props": ["variant: 'primary'|'secondary'|'ghost'", "size: 'sm'|'md'", "loading?: boolean", "disabled?: boolean", "type?: 'button'|'submit'"] },
+    { "name": "Input",     "import": "@acme/ui",        "props": ["value: string", "invalid?: boolean", "disabled?: boolean", "aria-describedby?: string"] },
+    { "name": "Select",    "import": "@acme/ui",        "props": ["options: {label,value}[]", "invalid?: boolean", "disabled?: boolean"] },
+    { "name": "Checkbox",  "import": "@acme/ui",        "props": ["checked: boolean", "disabled?: boolean", "label: string"] },
+    { "name": "FormField", "import": "@acme/ui",        "props": ["label: string", "htmlFor: string", "error?: string", "hint?: string", "required?: boolean"] },
+    { "name": "Card",      "import": "@acme/ui",        "props": ["elevation?: 'sm'|'md'|'lg'", "padding?: 'md'|'lg'"] },
+    { "name": "Alert",     "import": "@acme/ui",        "props": ["tone: 'error'|'success'|'warning'", "title?: string", "role?: 'alert'|'status'"] },
+    { "name": "Spinner",   "import": "@acme/ui",        "props": ["size?: 'sm'|'md'", "aria-label?: string"] },
+    { "name": "Skeleton",  "import": "@acme/ui",        "props": ["width?: string", "height?: string", "radius?: 'sm'|'md'"] },
+    { "name": "Icon",      "import": "@acme/ui",        "props": ["name: string", "size?: number", "aria-hidden?: boolean"] }
+  ],
+  "conventions": {
+    "styling": "CSS Modules with design-token CSS variables only: var(--color-text-primary). No raw hex, rgb, px-for-color, or inline literal colors.",
+    "fileLayout": "<Name>/<Name>.tsx, <Name>/<Name>.module.css, <Name>/<Name>.stories.tsx, <Name>/<Name>.test.tsx, <Name>/index.ts",
+    "stateModel": "Components are state-driven via an explicit `state` or boolean props; every visual state must be reachable from props (no hidden internal-only states)."
+  }
+}

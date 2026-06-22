@@ -13,10 +13,8 @@ clean context, communicating only through files on disk.
 
 ## What AI tool was used
 
-**Claude (Anthropic) — driven through the [Claude Agent SDK](https://www.npmjs.com/package/@anthropic-ai/claude-agent-sdk) (`@anthropic-ai/claude-agent-sdk`).**
+**Claude (Anthropic)**
 
-- The orchestrator ([`scripts/orchestrate.ts`](scripts/orchestrate.ts)) calls `query()` from the
-  Agent SDK to drive a headless Claude Code session step by step.
 - Default model: **`claude-opus-4-8`**, overridable via the `PIPELINE_MODEL` env var
   (e.g. `claude-sonnet-4-6` for cheaper/faster runs).
 - The same agent roles are *also* authored as portable **Claude Code skills**
@@ -27,7 +25,6 @@ clean context, communicating only through files on disk.
 
 | Concern | Who does it |
 |--------|-------------|
-| Step **ordering** & folder threading | Deterministic TypeScript in `orchestrate.ts` — never an LLM |
 | Each pipeline **stage** (extract, audit, spec, generate, validate, assemble) | A Claude **skill** invoked via the `Skill` tool |
 | The **work inside** each stage | Specialist **subagents** the skill spawns via the `Task` tool (parser, states-analyst, a11y-auditor, spec-author, code-generator, token-validator, qa-reviewer, assembler) |
 | **Ground-truth token check** | Deterministic scan of the generated CSS/TS — overrides whatever the LLM claims |

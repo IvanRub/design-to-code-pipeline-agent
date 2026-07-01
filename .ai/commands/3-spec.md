@@ -14,7 +14,7 @@ repair loop may regenerate code but must never edit the spec.
 - $ARGUMENTS
 
 ## Algorithm
-1. Call the Task Tool (switch_mode) to check for missing states & responsive gaps:
+1. Call the Task Tool to create specification of the UI component:
 
 - `subagent_type`: `spec-author`
 - `prompt`: "Input data (path to the folder with requirements): $ARGUMENTS.

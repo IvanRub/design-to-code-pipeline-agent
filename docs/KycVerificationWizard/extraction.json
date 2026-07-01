@@ -1,0 +1,35 @@
+{
+  "component": {
+    "name": "KycVerificationWizard",
+    "type": "form",
+    "business_context": "KYC (Know Your Customer) identity verification"
+  },
+  "specified_states": [
+    "step-personal-info",
+    "step-document-upload",
+    "step-selfie",
+    "step-indicator-current",
+    "step-indicator-completed",
+    "step-indicator-upcoming",
+    "back-navigation",
+    "next-navigation",
+    "upload-drag-active",
+    "upload-empty",
+    "upload-file-selected",
+    "verification-pending-review",
+    "verification-approved",
+    "verification-rejected"
+  ],
+  "tokens_referenced": [],
+  "unmapped_values": [],
+  "constraints": [
+    "Exactly 3 steps in fixed order: personal info, document upload, selfie",
+    "Step indicator is positioned at the top of the component",
+    "Navigation between steps is via Back and Next controls",
+    "Document upload supports drag-and-drop",
+    "Document upload supports a file picker",
+    "Accepted document file types: PDF, JPG, PNG",
+    "Maximum document file size: 10MB",
+    "Final step (selfie) displays verification status with exactly 3 possible values: pending review, approved, rejected"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "states_coverage": "20/20",
+  "states_detail": {
+    "step-personal-info": "covered",
+    "step-document-upload": "covered",
+    "step-selfie": "covered",
+    "step-indicator-current": "covered",
+    "step-indicator-completed": "covered",
+    "step-indicator-upcoming": "covered",
+    "back-navigation": "covered",
+    "next-navigation": "covered",
+    "upload-empty": "covered",
+    "upload-drag-active": "covered",
+    "upload-file-selected": "covered (a11y focus-return sub-requirement broken, see fix_list)",
+    "verification-pending-review": "covered",
+    "verification-approved": "covered",
+    "verification-rejected": "covered",
+    "loading": "covered",
+    "error": "covered",
+    "disabled": "covered",
+    "focus": "covered",
+    "empty": "covered",
+    "success": "covered"
+  },
+  "accessibility_score": "B (1 blocking, 3 minor)",
+  "accessibility_blocking": [
+    "upload-file-selected: 'Remove {fileName}' click handler calls dropzoneRef.current?.focus() synchronously in the same tick that onDocumentRemove() is invoked. The dropzone <div> is conditionally unmounted while document.status is 'selected'/'success', so dropzoneRef.current is null until the parent re-renders with the new status. Focus is therefore never actually returned to the dropzone after removal, violating the spec.json a11y requirement for 'upload-file-selected' ('...returns focus to the dropzone after removal'). The existing test only asserts onDocumentRemove was called, not that focus moved, so the regression is untested and unnoticed."
+  ],
+  "accessibility_minor": [
+    "upload-empty: dropzone is implemented as a <div role=\"button\" tabIndex={0}> with a manual onKeyDown handler rather than 'a real button/label' as literally specified in spec.json's accessibility bullet ('native <input type=\"file\"> triggered via a real button/label, not a bare div onClick'). It is functionally keyboard-operable (Enter/Space wired, proper role/tabIndex), but does not match the letter of the spec's preferred implementation pattern.",
+    "focus: the 'Focus' story renders the default personal-info step with no interaction/pseudo-class applied, so it does not visually demonstrate the :focus-visible ring described by the state — it is not distinguishable from the 'Empty' or 'StepPersonalInfo' stories.",
+    "upload-drag-active test quality: the test queries `getByRole('status', { name: '' })` (an unnamed status region) rather than asserting on the live-region's content directly by a stable query, which is fragile but not itself an a11y defect in the component."
+  ],
+  "fix_list": [
+    "In KycVerificationWizard.tsx, replace the synchronous `dropzoneRef.current?.focus()` call inside handleRemoveFile with a useEffect that watches `documentState.status` and calls `dropzoneRef.current?.focus()` only after the status has transitioned away from 'selected'/'success' (mirroring the existing heading-focus-on-step-change pattern), so focus is returned to the dropzone once it is actually back in the DOM.",
+    "Add/extend the 'upload-file-selected' test to assert that after clicking the remove button and the parent re-renders document status to 'empty', the dropzone (getByRole('button', { name: /drag and drop or browse/i })) actually receives focus — not just that onDocumentRemove was called — to prevent this regression from being reintroduced silently.",
+    "(Minor) Consider swapping the dropzone's <div role=\"button\"> for a native <button> (or a <label> wrapping the visually-hidden <input type=\"file\">) to align literally with the spec.json accessibility bullet preferring a 'real button/label' over a div with manual ARIA semantics.",
+    "(Minor) Update the 'Focus' story to demonstrate the focus-visible affordance explicitly (e.g. via Storybook's play function to tab/focus an element) rather than rendering an unfocused default state indistinguishable from 'Empty'."
+  ]
+}

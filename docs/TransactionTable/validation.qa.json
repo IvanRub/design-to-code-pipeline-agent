@@ -1,0 +1,18 @@
+{
+  "states_coverage": "11/11",
+  "accessibility_score": "B (1 blocking, 4 minor)",
+  "issues_found": [
+    "BLOCKING: 'empty' state a11y requirement not met. spec.json states[].a11y for 'empty' requires the message to be 'announced via role=\"status\" aria-live=\"polite\"', but in TransactionTable.tsx the empty message (<td className={styles.emptyCell}>No transactions match your filters</td>) is rendered as a plain table cell inside <tbody>, separate from the shared status region (<div className={styles.statusRegion} role=\"status\" aria-live=\"polite\">{liveMessage}</div>). The `liveMessage` useMemo only handles 'loading', sorted, and paginated branches and returns '' for the empty case, so the live region is empty and screen reader users are never told the table has no results.",
+    "MINOR: 'paginated' state a11y requirement 'prev/next controls ... are disabled (not merely visually muted) at the first/last page' is implemented in code (disabled={isFirstPage}/{isLastPage}) but has no test exercising the boundary case (page=1 or page=totalPages). TransactionTable.test.tsx only renders page=2 of 5, where both buttons are enabled, so the disabled-at-bounds behavior is unverified by tests.",
+    "MINOR: 'paginated' state a11y requirement that the page-size Select is 'labeled via FormField/associated <label> reading Rows per page' and that changing page size fires the shared live-region announcement ('Showing rows X-Y of Z') is implemented in code but not exercised by any test — no test queries the page-size control or asserts the live-region text for pagination changes.",
+    "MINOR: 'sorted' state a11y requirement that the shared aria-live='polite' status region announces 'Sorted by <column> <direction>' on change is implemented in code (liveMessage) but not asserted in TransactionTable.test.tsx — the sorted test only checks aria-sort and the button's accessible name, not the live-region text.",
+    "MINOR: 'row-clickable' state a11y requirement 'onKeyDown handling Enter/Space' and the isRowNavigating behavior ('the row is marked aria-disabled=\"true\" and pointer/keyboard activation is suppressed') are both implemented in code (handleRowKeyDown checks event.key === ' ' and aria-disabled/onClick guard on isRowNavigating) but neither is covered by a test — TransactionTable.test.tsx only exercises the Enter key with isRowNavigating left at its default (false)."
+  ],
+  "fix_list": [
+    "In TransactionTable.tsx, extend the `liveMessage` useMemo to return a message for the empty case (e.g. 'No transactions match your filters' or 'Showing 0 transactions') so the existing role=\"status\" aria-live=\"polite\" region announces the empty state, matching spec.json states[].a11y for 'empty'. Keep the visible empty-state <td> message as-is; ensure the same text (or an equivalent) is also emitted into the shared status region rather than left as a plain table cell.",
+    "Add a test asserting Previous/Next pagination buttons are disabled at the first page (page=1) and last page (page=totalPages), not merely styled, per the 'paginated' a11y requirement.",
+    "Add a test that changes the page-size Select and/or triggers onPageChange and asserts the live-region (role='status') announces 'Showing rows X-Y of Z'.",
+    "Add a test asserting the live-region (role='status') announces 'Sorted by <column> <direction>' when sortColumn/sortDirection change.",
+    "Add a test exercising Space-key activation of a clickable row (in addition to the existing Enter-key test), and a test asserting that when isRowNavigating is true, the row has aria-disabled='true' and neither click nor Enter/Space triggers onRowClick."
+  ]
+}

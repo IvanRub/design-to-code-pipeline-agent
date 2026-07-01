@@ -1,0 +1,27 @@
+{
+  "missing_states": [
+    "loading",
+    "error",
+    "disabled",
+    "focus",
+    "empty",
+    "success"
+  ],
+  "responsive_gaps": [
+    "below breakpoint.sm: step indicator must collapse to a compact/numeric form (e.g. 'Step 2 of 3') instead of showing all 3 labeled steps inline",
+    "below breakpoint.md: personal-info form fields stack vertically instead of any multi-column layout",
+    "below breakpoint.md: Back/Next navigation controls stack full-width and reorder so the primary action (Next) remains reachable by thumb without horizontal scrolling",
+    "below breakpoint.sm: the document-upload dropzone reflows to a full-width tap target sized for the file-picker fallback, since drag-and-drop is not a viable interaction on touch"
+  ],
+  "recommendations": [
+    "Add a `loading` state for document upload while the file is being read/validated, with a Spinner and disabled Next control until it resolves",
+    "Add a `loading` state after selfie submission while verification-pending-review is being determined, so users are never shown a blank gap between submit and result",
+    "Add a per-field `error` state on personal-info inputs bound to aria-describedby, driven by FormField's `error` prop, so invalid/missing required fields are surfaced before advancing",
+    "Add an `upload-error` state for document-upload distinguishing rejected file type (not PDF/JPG/PNG) and oversized file (>10MB), each with a distinct message rendered via Alert tone='error'",
+    "Add a `disabled` state for the Back control on step-personal-info (first step, nothing to go back to) and for the Next control until the current step's required fields/uploads are valid",
+    "Add a visible `focus` state (using color.focus.ring) for the step indicator items, the upload dropzone, and all form controls to satisfy keyboard navigation",
+    "Add an `empty` state for step-personal-info representing the pristine unfilled form, distinct from a filled-but-invalid state",
+    "Add a step-level `success` acknowledgment for document-upload and personal-info completion, separate from the terminal verification-approved state on the selfie step",
+    "Define layout behavior for the step indicator, upload dropzone, and Back/Next controls at breakpoint.sm and breakpoint.md so the wizard is usable on mobile"
+  ]
+}

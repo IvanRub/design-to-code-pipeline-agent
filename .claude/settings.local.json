@@ -4,7 +4,10 @@
       "Bash(npm -v)",
       "Bash(npx tsc *)",
       "Bash(echo \"exit: $?\")",
-      "Bash(command -v node)"
+      "Bash(command -v node)",
+      "Edit(.claude/skills/generate-component/**)",
+      "Bash(/Users/stivaner/.nvm/versions/node/v24.17.0/bin/node ./node_modules/typescript/bin/tsc -p tsconfig.json --noEmit)",
+      "Bash(echo \"EXIT: $?\")"
     ]
   },
   "enabledPlugins": {

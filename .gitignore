@@ -1,7 +1,5 @@
 node_modules/
 dist/
-docs/
-src/
 .env
 .env.local
 .DS_Store

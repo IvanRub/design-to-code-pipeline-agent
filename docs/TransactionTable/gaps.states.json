@@ -1,0 +1,18 @@
+{
+  "missing_states": ["loading", "empty", "error"],
+  "responsive_gaps": [
+    "below breakpoint.lg: 5-column table (date, amount, status, merchant name, payment method) has no reflow guidance; switch to a horizontally scrollable table or collapse secondary columns",
+    "below breakpoint.md: no guidance on row layout; stack columns into a card-per-transaction view with labeled fields",
+    "below breakpoint.sm: no guidance on pagination controls; page-size selector (25/50/100) and page navigation must remain reachable, e.g. collapse to a compact prev/next control"
+  ],
+  "recommendations": [
+    "Add a loading state that renders skeleton rows (using the Skeleton primitive) matching the 5 declared columns while data is fetched",
+    "Add an empty state shown when zero transactions match the current filters, with a clear message and no error styling",
+    "Add an error state using the Alert primitive (tone: 'error', role: 'alert') for failed data fetches, distinct from a per-row failed status badge",
+    "Define an explicit table row/cell layout for breakpoint.lg and below since the design system has no 'Table' primitive to inherit default responsive behavior from",
+    "Define a 'Badge' component (or add one to design-system/components.json) before implementation, since status badges are unmapped and must not be built with raw literal colors",
+    "Specify one design-system color token per status (pending/completed/failed/refunded) to drive badge tone, choosing from color.feedback.* and color.action.* tokens, verifying each pairing meets contrast against color.background.default and color.surface.card",
+    "Ensure the paginated state persists sort order and page size across page changes, and define behavior when a status filter reduces results to fewer than the selected page size",
+    "Define a loading state for the row-clickable interaction (e.g., disable row click while transaction detail is fetching) so it is not a hidden internal-only state"
+  ]
+}

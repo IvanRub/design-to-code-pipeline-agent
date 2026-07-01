@@ -1,0 +1,31 @@
+{
+  "component": {
+    "name": "TransactionTable",
+    "type": "table",
+    "business_context": "fintech transaction table"
+  },
+  "specified_states": [
+    "default",
+    "sorted",
+    "paginated",
+    "status:pending",
+    "status:completed",
+    "status:failed",
+    "status:refunded",
+    "row-clickable"
+  ],
+  "tokens_referenced": [],
+  "unmapped_values": [
+    "colored badge per status (pending/completed/failed/refunded) - no specific color per status given in brief",
+    "no 'Badge' component present in design-system/components.json",
+    "no 'Table' component present in design-system/components.json"
+  ],
+  "constraints": [
+    "Columns: date, amount, status, merchant name, payment method",
+    "Supports sorting by any column",
+    "Supports pagination with page sizes of 25, 50, or 100 per page",
+    "Status values limited to: pending, completed, failed, refunded",
+    "Each status has a colored badge",
+    "Row click opens transaction details"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "framework": "React 18 + TypeScript",
+  "files": [
+    { "filename": "PaymentCard/PaymentCard.tsx", "content": "See /Users/stivaner/Projects/design-to-code-pipeline-agent-2/src/PaymentCard/PaymentCard.tsx" },
+    { "filename": "PaymentCard/PaymentCard.module.css", "content": "See /Users/stivaner/Projects/design-to-code-pipeline-agent-2/src/PaymentCard/PaymentCard.module.css" },
+    { "filename": "PaymentCard/PaymentCard.stories.tsx", "content": "See /Users/stivaner/Projects/design-to-code-pipeline-agent-2/src/PaymentCard/PaymentCard.stories.tsx" },
+    { "filename": "PaymentCard/PaymentCard.test.tsx", "content": "See /Users/stivaner/Projects/design-to-code-pipeline-agent-2/src/PaymentCard/PaymentCard.test.tsx" },
+    { "filename": "PaymentCard/index.ts", "content": "See /Users/stivaner/Projects/design-to-code-pipeline-agent-2/src/PaymentCard/index.ts" }
+  ],
+  "states_covered": ["default", "selected", "loading", "empty", "error"],
+  "tokens_used": [
+    "font.family.sans",
+    "space.1",
+    "space.2",
+    "space.3",
+    "space.4",
+    "color.surface.card",
+    "color.border.strong",
+    "radius.md",
+    "shadow.sm",
+    "shadow.md",
+    "color.text.primary",
+    "color.text.secondary",
+    "color.focus.ring",
+    "color.action.primary.default",
+    "color.surface.overlay",
+    "font.size.md",
+    "font.size.sm",
+    "font.weight.medium",
+    "font.weight.regular",
+    "font.line-height.normal"
+  ]
+}

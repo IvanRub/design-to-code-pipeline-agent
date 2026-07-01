@@ -13,7 +13,7 @@ the assembler does not re-judge, re-derive, or re-validate anything.
 - $ARGUMENTS
 
 ## Algorithm
-1. Call the Task Tool (switch_mode) to check for missing states & responsive gaps:
+1. Call the Task Tool to generate a final report:
 
 - `subagent_type`: `assembler`
 - `prompt`: "Input data (path to the folder with requirements): $ARGUMENTS.

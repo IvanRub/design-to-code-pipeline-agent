@@ -1,0 +1,188 @@
+{
+  "component": {
+    "name": "PaymentCard",
+    "type": "card",
+    "business_context": "Merchant dashboard widget displaying a saved payment method, allowing the merchant to select a default card or delete a saved card."
+  },
+  "props": [
+    { "name": "state", "type": "'default' | 'selected' | 'loading' | 'empty' | 'error'", "required": true },
+    { "name": "brand", "type": "'visa' | 'mastercard' | 'amex'", "required": false },
+    { "name": "last4", "type": "string", "required": false },
+    { "name": "expiryMonth", "type": "string", "required": false },
+    { "name": "expiryYear", "type": "string", "required": false },
+    { "name": "cardholderName", "type": "string", "required": false },
+    { "name": "isSelected", "type": "boolean", "required": true },
+    { "name": "errorMessage", "type": "string", "required": false },
+    { "name": "isDeleting", "type": "boolean", "required": false },
+    { "name": "onSelect", "type": "() => void", "required": false },
+    { "name": "onDeleteRequest", "type": "() => void", "required": true },
+    { "name": "onDeleteConfirm", "type": "() => void", "required": true },
+    { "name": "onDeleteCancel", "type": "() => void", "required": true },
+    { "name": "onAddCard", "type": "() => void", "required": false },
+    { "name": "isDeleteConfirmOpen", "type": "boolean", "required": false }
+  ],
+  "composes": ["Card", "Button", "Icon", "Alert", "Spinner", "Skeleton"],
+  "states": [
+    {
+      "name": "default",
+      "trigger": "state==='default' && isSelected===false",
+      "tokens": [
+        "color.surface.card",
+        "color.border.strong",
+        "color.text.primary",
+        "color.text.secondary",
+        "radius.md",
+        "shadow.sm",
+        "space.4",
+        "font.size.md",
+        "font.size.sm",
+        "font.weight.medium",
+        "font.weight.regular"
+      ],
+      "a11y": "Card is rendered as role=\"radio\" within a role=\"radiogroup\" container, aria-checked=\"false\". Masked number exposed via aria-label=\"Card ending in {last4}\" (visible text stays '**** **** **** {last4}'). Brand icon exposes an accessible name (e.g. aria-label=\"Visa\") rather than aria-hidden. Delete control is a distinct, independently focusable Button with aria-label=\"Delete card ending in {last4}\". Space/Enter toggles selection when the card is focused; visible focus ring via color.focus.ring on both the card and the delete button."
+    },
+    {
+      "name": "selected",
+      "trigger": "state==='selected' || isSelected===true",
+      "tokens": [
+        "color.action.primary.default",
+        "color.surface.card",
+        "color.text.primary",
+        "color.text.secondary",
+        "radius.md",
+        "shadow.md",
+        "space.4",
+        "font.size.md",
+        "font.weight.medium"
+      ],
+      "a11y": "Selection is never conveyed by color alone: a 2px border in color.action.primary.default is paired with a visible checkmark Icon (accessible name \"Selected\") next to the brand icon. role=\"radio\" aria-checked=\"true\" reflects the bound isSelected prop. Selection change is announced via a visually-hidden role=\"status\" region (e.g. \"{brand} ending in {last4} selected\")."
+    },
+    {
+      "name": "loading",
+      "trigger": "state==='loading'",
+      "tokens": [
+        "color.surface.card",
+        "color.border.default",
+        "radius.md",
+        "radius.sm",
+        "space.4",
+        "space.2"
+      ],
+      "a11y": "Renders Skeleton placeholders (radius.sm) for brand icon, masked number, expiry, and cardholder name in place of real content; the card region gets role=\"status\" aria-label=\"Loading payment card\" so assistive tech announces the pending state without reading skeleton internals (aria-hidden on skeleton children). Card is not focusable/selectable and delete Button is disabled while loading."
+    },
+    {
+      "name": "empty",
+      "trigger": "state==='empty'",
+      "tokens": [
+        "color.surface.card",
+        "color.border.default",
+        "color.text.secondary",
+        "radius.md",
+        "space.4",
+        "space.2",
+        "font.size.sm"
+      ],
+      "a11y": "Renders a neutral message (\"No saved payment method\") plus a primary Button labelled \"Add card\" bound to onAddCard; no error styling/tone is applied. Region uses role=\"group\" with an aria-label describing the empty payment-method slot; the Add-card Button is reachable via Tab and carries a visible focus ring via color.focus.ring."
+    },
+    {
+      "name": "error",
+      "trigger": "state==='error'",
+      "tokens": [
+        "color.feedback.error",
+        "color.feedback.error.subtle",
+        "color.surface.card",
+        "color.text.primary",
+        "radius.md",
+        "space.4",
+        "space.2",
+        "font.size.sm"
+      ],
+      "a11y": "Surfaces an Alert with tone=\"error\" role=\"alert\" containing errorMessage, announced immediately to assistive tech. If last-known card data (last4/brand/expiry/name) is present it is preserved and still rendered beneath the Alert rather than discarded. Card is not selectable while in error; delete Button remains available so the merchant can retry removal."
+    }
+  ],
+  "delete_flow": {
+    "description": "Deletion is never triggered by a single click. onDeleteRequest opens a confirmation surface (isDeleteConfirmOpen) implemented as an Alert/dialog with role=\"alertdialog\" and an accessible name referencing the card (e.g. \"Delete card ending in {last4}?\"). Confirm calls onDeleteConfirm; Cancel or Escape calls onDeleteCancel and returns focus to the delete Button. While a delete request is in flight, isDeleting renders a Spinner (role=\"status\", aria-label=\"Deleting card\") in place of the confirm Button's label and disables both confirm and cancel controls. Success or failure is announced via a role=\"status\" (success) or role=\"alert\" (failure) region.",
+    "tokens": ["color.feedback.error", "color.surface.overlay", "radius.md", "space.4"]
+  },
+  "tokens": [
+    "color.surface.card",
+    "color.background.default",
+    "color.border.default",
+    "color.border.strong",
+    "color.text.primary",
+    "color.text.secondary",
+    "color.text.on-action",
+    "color.action.primary.default",
+    "color.action.primary.hover",
+    "color.action.primary.active",
+    "color.action.primary.disabled",
+    "color.feedback.error",
+    "color.feedback.error.subtle",
+    "color.feedback.success",
+    "color.focus.ring",
+    "color.surface.overlay",
+    "space.1",
+    "space.2",
+    "space.3",
+    "space.4",
+    "space.6",
+    "radius.sm",
+    "radius.md",
+    "font.family.sans",
+    "font.size.xs",
+    "font.size.sm",
+    "font.size.md",
+    "font.weight.regular",
+    "font.weight.medium",
+    "font.weight.bold",
+    "font.line-height.normal",
+    "shadow.sm",
+    "shadow.md",
+    "breakpoint.sm",
+    "breakpoint.md",
+    "breakpoint.lg",
+    "breakpoint.xl"
+  ],
+  "responsive": [
+    {
+      "breakpoint": "breakpoint.sm",
+      "behavior": "Below breakpoint.sm, the card stacks the brand icon above the masked number/cardholder name/expiry block (column layout, gap: space.2) instead of a leading-inline icon, to avoid truncating the masked number."
+    },
+    {
+      "breakpoint": "breakpoint.md",
+      "behavior": "Below breakpoint.md, the action controls (select affordance and delete Button) reflow below the card details in a full-width row (gap: space.2) instead of sitting inline at the trailing edge of the card."
+    },
+    {
+      "breakpoint": "breakpoint.lg",
+      "behavior": "Below breakpoint.lg, the parent dashboard grid collapses from a multi-column card grid to a single-column stacked card list (each PaymentCard full width, gap: space.4 between cards)."
+    },
+    {
+      "breakpoint": "breakpoint.xl",
+      "behavior": "Above breakpoint.xl, the card's max-width is capped and the card is centered within its grid cell instead of stretching to fill the full cell width."
+    }
+  ],
+  "accessibility": [
+    "Card group is a role=\"radiogroup\" of role=\"radio\" PaymentCard items; aria-checked reflects the isSelected prop; Space/Enter selects the focused card.",
+    "Selection state is conveyed by a 2px color.action.primary.default border plus a visible checkmark icon (never by color alone), addressing WCAG 1.4.1.",
+    "Default/non-selected card boundary uses color.border.strong (not color.border.default) to meet the WCAG 1.4.11 3:1 non-text contrast minimum.",
+    "Body text (masked number, expiry, cardholder name) uses color.text.primary, not color.text.disabled, to meet the WCAG 1.4.3 4.5:1 text contrast minimum in the default (non-disabled) state.",
+    "Masked card number has aria-label=\"Card ending in {last4}\" so screen readers announce a meaningful phrase instead of reading mask glyphs literally.",
+    "Card brand icon exposes an accessible name (e.g. aria-label=\"Visa\") instead of the Icon component's aria-hidden default, since it conveys meaning.",
+    "Delete control is an independently focusable Button (not nested inside the card's own interactive/selectable role) with aria-label=\"Delete card ending in {last4}\".",
+    "Deletion requires a confirmation step: role=\"alertdialog\" surface with Confirm/Cancel; Escape cancels and returns focus to the delete Button.",
+    "Select and delete outcomes are announced via a visually-hidden role=\"status\" (success/neutral) or role=\"alert\" (failure) live region.",
+    "Visible focus-visible ring via color.focus.ring is applied to the selectable card, the delete Button, and the confirm/cancel controls.",
+    "Keyboard model: Tab moves between card body and delete control as separate stops; Enter/Space selects the focused card; Escape dismisses the delete-confirmation surface.",
+    "Any selection-highlight transition or delete/removal animation is wrapped in @media (prefers-reduced-motion: reduce) to disable or shorten it.",
+    "Delete-in-flight state shows a Spinner with role=\"status\" aria-label=\"Deleting card\" and disables confirm/cancel controls until the request resolves.",
+    "Loading state exposes role=\"status\" aria-label=\"Loading payment card\" on the card region while Skeleton placeholders are aria-hidden.",
+    "Error state uses Alert role=\"alert\" and preserves last-known card data instead of discarding it."
+  ],
+  "open_questions": [
+    "No token exists specifically for a 'selection' indicator; using color.action.primary.default (~4.0:1 on white, passes the 3:1 non-text minimum) as the selected border color, paired with a non-color checkmark cue, per gaps.a11y.json recommendation.",
+    "No token exists for the default (non-selected) card border that meets 3:1 contrast; color.border.default (#D8DEE9, ~1.3:1) fails WCAG 1.4.11, so color.border.strong (#A7B0C0) is used as the nearest existing token, though its exact contrast ratio against white was not independently re-derived here and should be confirmed by the token/QA validators.",
+    "No dedicated 'destructive' action token exists for the delete Button; using color.feedback.error for the delete affordance's icon/text tone as the nearest existing semantic match, falling back to standard Button variants (secondary/ghost) for structure.",
+    "No explicit token/spec value was given for the delete-confirmation dialog's overlay; color.surface.overlay is used as the nearest existing token.",
+    "components.json's Card primitive does not expose a native 'selectable/radio' variant; the radiogroup/radio semantics (role, aria-checked, keyboard handling) must be layered on top of Card by the code generator rather than assumed to exist in the primitive."
+  ]
+}

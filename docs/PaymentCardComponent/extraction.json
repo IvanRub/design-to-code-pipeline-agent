@@ -1,0 +1,21 @@
+{
+  "component": {
+    "name": "PaymentCard",
+    "type": "card",
+    "business_context": "Merchant dashboard widget displaying a saved payment method"
+  },
+  "specified_states": [
+    "default",
+    "selected"
+  ],
+  "tokens_referenced": [],
+  "unmapped_values": [],
+  "constraints": [
+    "Card number must be displayed masked, showing only the last 4 digits, in the format '**** **** **** 1234'",
+    "Must display the expiry date",
+    "Must display the cardholder name",
+    "Must display a card brand icon supporting at least Visa, Mastercard, and Amex",
+    "User can select the card",
+    "User can delete the card"
+  ]
+}

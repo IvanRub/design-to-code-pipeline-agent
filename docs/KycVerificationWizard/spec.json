@@ -1,0 +1,228 @@
+{
+  "component": {
+    "name": "KycVerificationWizard",
+    "type": "form",
+    "business_context": "A 3-step Know-Your-Customer (KYC) identity verification wizard: personal information, document upload, and selfie capture/upload, ending in a verification status outcome (pending review / approved / rejected)."
+  },
+  "props": [
+    { "name": "currentStep", "type": "'personal-info' | 'document-upload' | 'selfie'", "required": true },
+    { "name": "personalInfo", "type": "{ fields: Array<{ name: string; label: string; value: string; error?: string; hint?: string; required?: boolean }> }", "required": true },
+    { "name": "document", "type": "{ status: 'empty' | 'drag-active' | 'selected' | 'loading' | 'error' | 'success'; file?: { name: string; size: number; type: string }; error?: string }", "required": true },
+    { "name": "selfie", "type": "{ status: 'empty' | 'captured' | 'loading' | 'error'; imageUrl?: string; error?: string }", "required": true },
+    { "name": "verification", "type": "{ status: 'pending-review' | 'approved' | 'rejected'; message?: string } | undefined", "required": false },
+    { "name": "isBackDisabled", "type": "boolean", "required": true },
+    { "name": "isNextDisabled", "type": "boolean", "required": true },
+    { "name": "isNextLoading", "type": "boolean", "required": true },
+    { "name": "onBack", "type": "() => void", "required": true },
+    { "name": "onNext", "type": "() => void", "required": true },
+    { "name": "onFieldChange", "type": "(name: string, value: string) => void", "required": true },
+    { "name": "onDocumentDrop", "type": "(files: FileList) => void", "required": true },
+    { "name": "onDocumentSelect", "type": "(files: FileList) => void", "required": true },
+    { "name": "onDocumentRemove", "type": "() => void", "required": true },
+    { "name": "onSelfieCapture", "type": "(image: File | Blob) => void", "required": true },
+    { "name": "disabled", "type": "boolean", "required": false }
+  ],
+  "composes": ["Button", "Input", "FormField", "Card", "Alert", "Spinner", "Skeleton", "Icon"],
+  "states": [
+    {
+      "name": "step-personal-info",
+      "trigger": "currentStep === 'personal-info'",
+      "tokens": ["space.6", "font.size.lg", "font.weight.bold", "color.text.primary"],
+      "a11y": "Step region has a heading (e.g. 'Step 1 of 3: Personal information') that receives focus on entry via tabIndex={-1} + focus(); wizard root uses role=\"form\" with aria-labelledby pointing to that heading."
+    },
+    {
+      "name": "step-document-upload",
+      "trigger": "currentStep === 'document-upload'",
+      "tokens": ["space.6", "font.size.lg", "font.weight.bold", "color.text.primary"],
+      "a11y": "Step heading ('Step 2 of 3: Document upload') receives focus on entry; dropzone is described by aria-describedby listing accepted types and size limit."
+    },
+    {
+      "name": "step-selfie",
+      "trigger": "currentStep === 'selfie'",
+      "tokens": ["space.6", "font.size.lg", "font.weight.bold", "color.text.primary"],
+      "a11y": "Step heading ('Step 3 of 3: Selfie verification') receives focus on entry; verification status panel (if present) is rendered below the capture control."
+    },
+    {
+      "name": "step-indicator-current",
+      "trigger": "step index === currentStep index",
+      "tokens": ["color.action.primary.default", "color.text.on-action", "radius.full", "font.weight.bold"],
+      "a11y": "aria-current=\"step\" on the active segment; visually hidden text: '{Label}, current step'. State conveyed by filled background + bold text + aria-current, not color alone."
+    },
+    {
+      "name": "step-indicator-completed",
+      "trigger": "step index < currentStep index",
+      "tokens": ["color.feedback.success", "color.text.on-action", "radius.full"],
+      "a11y": "Checkmark Icon (aria-hidden) plus visually hidden text: '{Label}, completed'. Success color meets ≥3:1 against background.default; icon+text are the non-color signal (WCAG 1.4.1)."
+    },
+    {
+      "name": "step-indicator-upcoming",
+      "trigger": "step index > currentStep index",
+      "tokens": ["color.border.strong", "color.text.secondary", "radius.full"],
+      "a11y": "Uses color.border.strong (not color.border.default, which fails 3:1) for the segment outline, plus the step number and visually hidden text: '{Label}, upcoming'. Non-color signal: unfilled outline + number + text."
+    },
+    {
+      "name": "back-navigation",
+      "trigger": "always rendered; disabled via isBackDisabled",
+      "tokens": ["color.action.primary.disabled", "color.text.disabled"],
+      "a11y": "Rendered as Button variant=\"secondary\"; disabled prop set (not aria-disabled) when isBackDisabled is true so it is removed from the tab order's operable state but still announced as disabled."
+    },
+    {
+      "name": "next-navigation",
+      "trigger": "always rendered; disabled via isNextDisabled, busy via isNextLoading",
+      "tokens": ["color.action.primary.default", "color.action.primary.hover", "color.action.primary.active", "color.action.primary.disabled", "color.text.on-action"],
+      "a11y": "Rendered as Button variant=\"primary\"; disabled when isNextDisabled; when isNextLoading, Button loading prop shows an inline Spinner with aria-label=\"Validating…\" inside a role=\"status\" live region so AT users aren't left waiting silently."
+    },
+    {
+      "name": "upload-empty",
+      "trigger": "document.status === 'empty'",
+      "tokens": ["color.border.default", "color.background.subtle", "color.text.secondary", "radius.md", "space.8"],
+      "a11y": "Dropzone is a labelled, keyboard-focusable button (tabIndex 0) wrapping a visually-hidden native <input type=\"file\">; Enter/Space opens the file picker. aria-label: 'Drag and drop or browse. PDF, JPG, PNG. Max 10MB.'"
+    },
+    {
+      "name": "upload-drag-active",
+      "trigger": "document.status === 'drag-active'",
+      "tokens": ["color.action.primary.default", "color.background.subtle", "radius.md"],
+      "a11y": "Border color changes to color.action.primary.default (visual-only affordance is supplemented by a visually hidden live region announcing 'Drop to upload' via role=\"status\") so screen reader users are not left without feedback during drag."
+    },
+    {
+      "name": "upload-file-selected",
+      "trigger": "document.status === 'selected' && document.file",
+      "tokens": ["color.border.default", "color.text.primary", "color.feedback.success", "radius.md", "space.3"],
+      "a11y": "File name/size rendered as text (not color-only); a labelled 'Remove file' Icon button (accessible name: 'Remove {fileName}') is keyboard operable and returns focus to the dropzone after removal."
+    },
+    {
+      "name": "verification-pending-review",
+      "trigger": "verification.status === 'pending-review'",
+      "tokens": ["color.feedback.warning", "color.background.subtle"],
+      "a11y": "Rendered via Alert tone=\"warning\" role=\"status\" (polite, non-blocking outcome); icon + text convey state, not color alone."
+    },
+    {
+      "name": "verification-approved",
+      "trigger": "verification.status === 'approved'",
+      "tokens": ["color.feedback.success", "color.background.subtle"],
+      "a11y": "Rendered via Alert tone=\"success\" role=\"status\"; icon + text convey state, not color alone."
+    },
+    {
+      "name": "verification-rejected",
+      "trigger": "verification.status === 'rejected'",
+      "tokens": ["color.feedback.error", "color.feedback.error.subtle"],
+      "a11y": "Rendered via Alert tone=\"error\" role=\"alert\" (assertive, requires user action); icon + text convey state, not color alone."
+    },
+    {
+      "name": "loading",
+      "trigger": "document.status === 'loading' || selfie.status === 'loading' || isNextLoading",
+      "tokens": ["color.action.primary.disabled"],
+      "a11y": "A Spinner with an explicit aria-label ('Uploading document…' / 'Verifying identity…' / 'Validating…') is rendered inside a role=\"status\" (aria-live=\"polite\") live region; the corresponding control (dropzone, capture button, or Next) is disabled for the duration."
+    },
+    {
+      "name": "error",
+      "trigger": "personalInfo field has .error, or document.status === 'error', or selfie.status === 'error'",
+      "tokens": ["color.feedback.error", "color.feedback.error.subtle"],
+      "a11y": "Field-level errors: FormField error prop + aria-invalid=\"true\" + aria-describedby on the Input. Upload/selfie errors: Alert tone=\"error\" role=\"alert\" bound to the dropzone/capture control via aria-describedby, distinguishing 'unsupported file type' vs 'file exceeds 10MB' with distinct messages."
+    },
+    {
+      "name": "disabled",
+      "trigger": "disabled === true (whole wizard), or isBackDisabled / isNextDisabled per-control",
+      "tokens": ["color.action.primary.disabled", "color.text.disabled", "color.border.default"],
+      "a11y": "color.text.disabled and color.action.primary.disabled are confined strictly to disabled control text/backgrounds (never used for readable body/status copy); disabled state set via the native disabled attribute on Button/Input, not visual styling alone."
+    },
+    {
+      "name": "focus",
+      "trigger": "any interactive element (step segment, dropzone, file-remove button, Back, Next, form inputs) receives keyboard focus",
+      "tokens": ["color.focus.ring"],
+      "a11y": "A ≥2px focus-visible outline using color.focus.ring (≥3:1 contrast) is applied via :focus-visible to step indicator segments, the dropzone, the file-remove control, Back/Next buttons, and all form fields."
+    },
+    {
+      "name": "empty",
+      "trigger": "personalInfo.fields all pristine/unfilled (step-personal-info), or document.status === 'empty', or selfie.status === 'empty'",
+      "tokens": ["color.text.secondary", "color.border.default"],
+      "a11y": "Pristine empty state is visually and semantically distinct from a filled-but-invalid state: no aria-invalid is set until the user has interacted with or attempted to submit the field (avoids premature error announcements)."
+    },
+    {
+      "name": "success",
+      "trigger": "document.status === 'success' (document accepted, distinct from verification-approved) or a personal-info field passes validation on blur",
+      "tokens": ["color.feedback.success"],
+      "a11y": "Step-level success acknowledgment (e.g. a success Icon next to the uploaded file, or a completed step-indicator segment) is announced via a visually hidden 'Document uploaded successfully' string inside a role=\"status\" region; kept distinct from the terminal verification-approved state."
+    }
+  ],
+  "tokens": [
+    "color.background.default",
+    "color.background.subtle",
+    "color.surface.card",
+    "color.border.default",
+    "color.border.strong",
+    "color.text.primary",
+    "color.text.secondary",
+    "color.text.disabled",
+    "color.text.on-action",
+    "color.action.primary.default",
+    "color.action.primary.hover",
+    "color.action.primary.active",
+    "color.action.primary.disabled",
+    "color.feedback.error",
+    "color.feedback.error.subtle",
+    "color.feedback.success",
+    "color.feedback.warning",
+    "color.focus.ring",
+    "space.1",
+    "space.2",
+    "space.3",
+    "space.4",
+    "space.5",
+    "space.6",
+    "space.8",
+    "radius.sm",
+    "radius.md",
+    "radius.full",
+    "font.family.sans",
+    "font.size.xs",
+    "font.size.sm",
+    "font.size.md",
+    "font.size.lg",
+    "font.weight.regular",
+    "font.weight.medium",
+    "font.weight.bold",
+    "font.line-height.tight",
+    "font.line-height.normal",
+    "shadow.sm",
+    "breakpoint.sm",
+    "breakpoint.md"
+  ],
+  "responsive": [
+    {
+      "breakpoint": "breakpoint.sm",
+      "behavior": "Below breakpoint.sm, the step indicator collapses from three labeled inline segments to a compact numeric form ('Step 2 of 3: Document upload') using font.size.sm; the document-upload dropzone becomes a full-width tap target sized for the file-picker button (drag-and-drop affordance is retained but de-emphasized since it is not viable on touch)."
+    },
+    {
+      "breakpoint": "breakpoint.md",
+      "behavior": "Below breakpoint.md, personal-info form fields stack vertically (single column, space.4 gap) instead of any multi-column layout; Back/Next controls stack full-width and reorder so Next (primary action) is reachable by thumb (rendered first/bottom) without horizontal scrolling."
+    },
+    {
+      "breakpoint": "breakpoint.lg",
+      "behavior": "At breakpoint.lg and above, personal-info fields may render in a 2-column grid (space.6 gutter) inside a Card with padding=\"lg\"; Back and Next render side by side, Next right-aligned."
+    }
+  ],
+  "accessibility": [
+    "Wizard root uses role=\"form\" with aria-labelledby referencing the current step's heading; on every Back/Next transition, focus programmatically moves to the new step's heading (tabIndex={-1} + .focus()) so keyboard/AT users are never stranded on a removed button",
+    "Step indicator is a list (ol/li) with aria-current=\"step\" on the active item and visually hidden text conveying '{label}, current|completed|upcoming' for every segment — state is never color-only",
+    "Completed step-indicator segments use color.feedback.success (≥3:1) plus a checkmark Icon; upcoming segments use color.border.strong (not color.border.default, which fails the 3:1 UI-component contrast minimum) plus the step number as a non-color signal",
+    "Document upload dropzone is a labelled, keyboard-operable control (native <input type=\"file\"> triggered via a real button/label, not a bare div onClick) reachable by Tab and activatable with Enter/Space; aria-describedby states accepted types (PDF, JPG, PNG) and the 10MB limit",
+    "Drag-active state is announced to screen reader users via a role=\"status\" live region ('Drop to upload'), not conveyed by border color alone",
+    "File type/size validation errors (wrong type, >10MB) are surfaced via Alert role=\"alert\" bound to the dropzone through aria-describedby and aria-invalid, with distinct copy per error cause",
+    "Selected file has a keyboard-focusable, labelled 'Remove {fileName}' control implemented with the Icon component plus an accessible name — never a decorative icon alone",
+    "Verification status uses role=\"status\" (Alert tone=\"warning\"/\"success\") for pending-review and approved outcomes, and role=\"alert\" (Alert tone=\"error\") for rejected, since rejection requires user action",
+    "All async operations (document upload processing, verification determination, Next-button validation) use a Spinner with an explicit aria-label describing what is loading, wrapped in a role=\"status\" (aria-live=\"polite\") region",
+    "Every personal-info field is bound through FormField (label + htmlFor) with aria-describedby for hint/error text and aria-invalid=\"true\" set only after interaction/attempted submission, not on initial pristine render",
+    "A visible ≥2px focus ring using color.focus.ring is applied via :focus-visible to the step indicator segments, dropzone, file-remove control, Back/Next buttons, and every form field",
+    "Step-transition, upload-progress, and spinner animations are wrapped in a prefers-reduced-motion media query and disabled/shortened when the OS preference is set",
+    "color.text.disabled and color.action.primary.disabled are confined strictly to genuinely disabled control text/backgrounds and are always paired with the native disabled attribute — never used as the sole cue for state or for any readable body/status text"
+  ],
+  "open_questions": [
+    "Personal-info fields are not enumerated in the brief (no names, DOB, address, national ID, etc. specified); the props model exposes a generic `personalInfo.fields[]` array rather than named fields — the concrete field set must be supplied by the caller/host application before this can be considered field-complete.",
+    "The brief does not specify whether the selfie step uses live device-camera capture, file upload, or both; the `selfie` prop models a generic captured-image/status shape (`selfie.status`, `selfie.imageUrl`) that supports either implementation, but camera-permission-denied / no-camera-detected handling is not modeled as a distinct enum value pending clarification.",
+    "No design-system token exists for a 'subtle' success or warning background (only color.feedback.error.subtle is defined) to safely pair with color.feedback.success / color.feedback.warning as a tinted status-card background; the spec falls back to color.background.subtle (a neutral surface) for the pending-review and approved Alert backgrounds instead of inventing new success/warning-subtle tokens.",
+    "Whether the transition from 'pending review' to 'approved'/'rejected' is synchronous (immediately after selfie submission) or asynchronous/polled is not specified; the `verification` prop is modeled as caller-supplied state (not internally polled) so the host application owns that timing decision.",
+    "Whether a document upload allows exactly one file or multiple is not specified; the spec assumes single-document upload per the brief's singular phrasing ('document upload'), reflected in `document` being a single object rather than an array — flagged as an assumption carried over from extraction.",
+    "No token pair is specified for the upcoming step-indicator marker's fill/outline against color.background.default beyond color.border.strong (~2.5:1, below the 3:1 UI-component minimum in isolation); the spec mitigates this by requiring the step number + text as the primary non-color signal rather than relying on the outline's contrast alone, since no stronger neutral border token exists in tokens.json."
+  ]
+}

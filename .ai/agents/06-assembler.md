@@ -37,7 +37,9 @@ Required steps, follow them STRICTLY in sequence:
    - `issues_found` = qa.issues_found ∪ tokens.misuse_warnings
    - `hallucinations_caught` = validation.tokens.json.hallucinations_caught
 
-## Output (write `output.json`) — must match exactly:
+## Output (write `/docs/{COMPONENT_FOLDER}/output.json`) — must match exactly:
+Write to the fully-qualified `/docs/{COMPONENT_FOLDER}/output.json` path inside the component
+folder from your input, never a bare `output.json` in the current directory.
 ```json
 {
   "component": { "name": "", "type": "", "business_context": "" },
@@ -49,4 +51,6 @@ Required steps, follow them STRICTLY in sequence:
 ```
 
 ## Done when
+- The file exists on disk at `/docs/{COMPONENT_FOLDER}/output.json`. Write it **before** reporting
+  success — never claim done until the file is actually written to that path.
 - `output.json` is valid and contains every key of the schema with correct types.

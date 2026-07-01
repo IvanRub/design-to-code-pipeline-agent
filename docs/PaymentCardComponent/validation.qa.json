@@ -1,0 +1,19 @@
+{
+  "states_coverage": "5/5",
+  "accessibility_score": "B (2 blocking, 3 minor)",
+  "issues_found": [
+    "Delete-confirmation dialog (role=\"alertdialog\", isDeleteConfirmOpen) is rendered as a sibling of the radio card, not nested inside it, and the only Escape-key handler (handleKeyDown) is attached to the role=\"radio\" div. Once focus moves into the Cancel/Confirm buttons inside the dialog, pressing Escape never reaches handleKeyDown, so 'Escape cancels and returns focus to the delete Button' (spec.delete_flow, spec.accessibility) is not actually reachable via keyboard.",
+    "Spec states loading state a11y: 'delete Button is disabled while loading', but the loading branch (state==='loading') returns early and renders no Button/.actions at all — the disabled delete control does not exist in the DOM, so this spec requirement is unimplemented and untestable as written.",
+    "The entire delete_flow (isDeleteRequest -> isDeleteConfirmOpen alertdialog -> Confirm/Cancel -> isDeleting Spinner) has zero test coverage in PaymentCard.test.tsx and zero story coverage in PaymentCard.stories.tsx — none of Confirm, Cancel, Escape-cancel, focus-return-to-delete-button, or the isDeleting Spinner/disabled-controls behavior is exercised anywhere.",
+    "Component never composes the 'Card' primitive from @acme/ui despite spec.composes listing it — the card, confirm surface, and all containers are raw <div>s. Not a hallucinated import, but a spec-declared composition that is silently skipped.",
+    "axe accessibility smoke test only renders the 'default' state; 'selected', 'loading', 'empty', 'error', and the delete-confirmation surface are never axe-checked, so violations specific to those states (e.g. the alertdialog's missing aria-modal, the error-state radio still carrying role=\"radio\"/aria-checked while non-interactive) would not be caught."
+  ],
+  "fix_list": [
+    "Move the Escape-to-cancel keydown handling onto the confirmation overlay/dialog itself (e.g. onKeyDown on the .overlay or .confirmSurface div, or a document-level listener scoped to isDeleteConfirmOpen) so Escape works regardless of which control inside the dialog currently has focus.",
+    "Render the delete Button (disabled) in the loading-state branch instead of omitting the .actions/Button entirely, per spec.states.loading a11y text, and add a test asserting the delete Button is present and disabled while state==='loading'.",
+    "Add test(s) exercising the delete-confirmation flow: opening isDeleteConfirmOpen renders role=\"alertdialog\" with the expected accessible name, Confirm calls onDeleteConfirm, Cancel calls onDeleteCancel, Escape calls onDeleteCancel and returns focus to the delete Button, and isDeleting renders the Spinner (role=\"status\", aria-label=\"Deleting card\") with Confirm/Cancel disabled.",
+    "Add a Storybook story for the delete-confirmation surface (isDeleteConfirmOpen: true, and a second variant with isDeleting: true) so it is covered as a visual-regression fixture per the project's testing conventions.",
+    "Either compose the @acme/ui Card primitive for the card/confirm-surface containers or explicitly document in generated.meta.json why Card was intentionally not used, so the spec.composes contract is not silently ignored.",
+    "Extend the axe smoke test (or add additional axe assertions) to cover at least the 'error' state and the open delete-confirmation dialog, since those introduce distinct roles (alert, alertdialog) not present in the 'default' state check."
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "accessibility_gaps": [
+    "No 'Badge' component in design-system/components.json and no status-color mapping in tokens.json: brief requires 4 status badges (pending/completed/failed/refunded) but only color.feedback.success (#067647), color.feedback.error (#D92D20), and color.feedback.warning (#B54708) exist — there is no neutral/info token for 'pending' or 'refunded', risking hallucinated hex colors",
+    "color.feedback.success (#067647) on color.background.default (#FFFFFF) = approx 5.5:1 PASS for text, usable for 'completed' badge text",
+    "color.feedback.error (#D92D20) on color.background.default (#FFFFFF) = approx 4.8:1 PASS for text, usable for 'failed' badge text",
+    "color.feedback.warning (#B54708) on color.background.default (#FFFFFF) = approx 5.1:1 PASS for text, usable for 'pending' badge text if repurposed, but semantically warning != pending and reuse must be a deliberate spec decision, not silent",
+    "No token exists for a neutral/info badge (e.g. 'refunded'); if Code Generator falls back to color.text.secondary (#475569) on color.background.subtle (#F5F7FA) = approx 7.1:1 PASS for text, but badge background itself (color.background.subtle on color.surface.card, both near-white) is < 3:1 and will not read as a distinct badge boundary without color.border.default outline",
+    "Badge components using only background color to convey status (no icon/text label) fail WCAG 1.4.1 (Use of Color) for color-blind users; status text label must always accompany the color chip",
+    "Table missing accessible name: no aria-label or aria-labelledby specified for the table region/caption identifying it as 'Transactions'",
+    "Sortable column headers missing aria-sort (values: 'ascending'|'descending'|'none') and missing role='columnheader' semantics if not using native <th scope=\"col\">",
+    "Sort control missing accessible name distinguishing 'currently sorted by X, activate to sort by Y' — a bare clickable header icon has no discoverable label for screen readers",
+    "Row click ('row-clickable' state) has no specified semantics: a <tr> with onClick is not natively focusable or operable by keyboard and is invisible to assistive tech as an interactive element",
+    "No focus-visible ring specified for sortable column headers or clickable rows using color.focus.ring (#1A5CFF)",
+    "Pagination controls (page size 25/50/100, page navigation) missing required ARIA: no aria-label on the pagination nav landmark, no aria-current='page' on the active page control, no accessible name on prev/next controls",
+    "Page-size select has no association to a visible/programmatic label (brief never specifies a label like 'Rows per page')",
+    "No live-region announcement specified for asynchronous state changes: sorting a column, changing page, or changing page size all update the visible rowset but nothing announces this to screen reader users (should use role='status' with polite aria-live)",
+    "Loading/empty states for the table (data fetch while paginating or sorting) are not addressed: no role='status' or Skeleton usage specified while data loads, so screen reader users get silent UI reflow",
+    "No specified behavior for reduced motion: if any transition/skeleton shimmer is used for loading rows, prefers-reduced-motion is not mentioned",
+    "Numeric/currency amount column has no specified reading order or unit disambiguation (e.g. screen readers reading '$1,250.00' vs locale-formatted numbers) — no aria-label or visually-hidden currency context specified",
+    "Date column format not specified for accessible reading (e.g. ambiguous numeric dates read poorly by screen readers without an accessible full-date string)"
+  ],
+  "recommendations": [
+    "Define an explicit status-to-token mapping in spec.json before code generation: completed -> color.feedback.success, failed -> color.feedback.error, pending -> color.feedback.warning (or request a new token if warning is reserved for a different meaning), and either request a new neutral token or explicitly reuse color.text.secondary + color.border.default for 'refunded' — do not let the Code Generator invent a hex value",
+    "Render status badges as an icon-or-text chip plus color, never color alone, to satisfy WCAG 1.4.1",
+    "Use a native <table> with <caption> (visually hidden if needed) or aria-label identifying the table's purpose, and <th scope=\"col\"> for all column headers",
+    "Add aria-sort to the currently sorted <th> ('ascending'/'descending') and 'none' to the others; make each sortable header a <button> inside the <th> so it is natively focusable and operable with Enter/Space",
+    "Make clickable rows keyboard-operable: either wrap row content in a focusable element (role='link' or a button per row) with a visible focus ring using color.focus.ring, or add tabIndex=0, role='button', and onKeyDown handling Enter/Space to the row",
+    "Wrap the pagination controls in <nav aria-label=\"Pagination\">, mark the active page button aria-current=\"page\", and label prev/next icon buttons with aria-label ('Previous page' / 'Next page')",
+    "Label the page-size Select using FormField or a visually-associated <label htmlFor>, e.g. 'Rows per page'",
+    "Add a visually-hidden role=\"status\" aria-live=\"polite\" region that announces 'Showing rows X-Y of Z, sorted by <column> <direction>' whenever sort, page, or page-size changes",
+    "Use the Skeleton component (already in the catalog) for loading rows and wrap the table body update in the same aria-live=\"polite\" status region so loading transitions are announced instead of silent",
+    "Respect prefers-reduced-motion for any skeleton shimmer or sort-transition animation",
+    "Add a visually-hidden full-text alternative for date and currency cells (e.g. aria-label with the unabbreviated locale string) if the visible format is abbreviated or symbol-only"
+  ]
+}

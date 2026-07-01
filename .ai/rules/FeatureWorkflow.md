@@ -7,10 +7,10 @@ files the previous roles wrote. Steps 0–8:
 |------|---------|-----------------|----------------------|
 | 0 | Orchestrator: intake | `brief.md`, run dir | brief non-empty |
 | 1 | **Parser / Requirements Analyst** | `extraction.json` | valid JSON, component type set |
-| 2 | **States Analyst** ‖ **A11y Auditor** (parallel) | `gaps.states.json`, `gaps.a11y.json` | both valid JSON |
+| 2 | **States Analyst** && **A11y Auditor** (sequential) | `gaps.states.json`, `gaps.a11y.json` | both valid JSON |
 | 3 | **Spec Author / Tech Lead** | `spec.json` | every gap is resolved or explicitly waived |
 | 4 | **Code Generator / Developer** | `generated/*`, `generated.meta.json` | files compile-shaped, meta valid |
-| 5 | **Token Validator** ‖ **QA Reviewer** (parallel) | `validation.tokens.json`, `validation.qa.json` | 0 hallucinated tokens; coverage == spec |
+| 5 | **Token Validator** && **QA Reviewer** (sequential) | `validation.tokens.json`, `validation.qa.json` | 0 hallucinated tokens; coverage == spec |
 | 6 | Orchestrator: assemble | `output.json` | matches Expected Output schema |
 | 7 | Orchestrator: gate | — | if validation failed → loop to step 4 with feedback (max 2) |
 | 8 | Orchestrator: report | console + `output.json` | — |

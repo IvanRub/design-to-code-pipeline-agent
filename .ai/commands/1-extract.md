@@ -13,13 +13,16 @@ Turn the raw human brief into structured, grounded facts. First step of the pipe
 
 ## Algorithm
 
-Call the Task Tool (switch_mode) to describe brief requirements:
+Call the Task Tool to describe brief requirements:
 
 - `subagent_type`: `parser`
 - `prompt`: "Input data (description of brief needs): $ARGUMENTS.
-Return a list of created or modified files for subsequent review."
+Return a list of created or modified files for subsequent review, and state explicitly the
+component folder path (`docs/<slug>/`) and the full path to the `extraction.json` you wrote."
 
-Wait for the agent to complete and save the list of files from its response.
+Wait for the agent to complete, then **surface the component folder path and the `extraction.json`
+path back to the caller** — the orchestrator threads `{FOLDER}` from that path, not from filesystem
+timestamps. If no `extraction.json` path was produced, report step 1 as failed.
 
 ## Quality checkpoints
 - JSON parses and matches the parser's declared output shape.

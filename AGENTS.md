@@ -83,10 +83,10 @@ order* — it never edits an artifact or talks to a skill's subagents directly.
 | Step | Skill | Subagent(s) | Input | Output artifact |
 |------|-------|-------------|-------|-----------------|
 | 1 | `sk-extract` | **Parser** | brief | `extraction.json` (+ creates the component folder) |
-| 2 | `sk-audit` | **States Analyst** ‖ **A11y Auditor** *(parallel)* | extraction | `gaps.states.json`, `gaps.a11y.json` |
+| 2 | `sk-audit` | **States Analyst** ‖ **A11y Auditor** | extraction | `gaps.states.json`, `gaps.a11y.json` |
 | 3 | `sk-create-spec` | **Spec Author** | extraction + gaps | `spec.json` *(frozen contract)* |
 | 4 | `sk-create-implementation` | **Code Generator** | spec | `src/<Component>/*`, `generated.meta.json` |
-| 5 | `sk-validate-implementation` | **Token Validator** ‖ **QA Reviewer** *(parallel)* | code, spec | `validation.tokens.json`, `validation.qa.json` |
+| 5 | `sk-validate-implementation` | **Token Validator** ‖ **QA Reviewer** | code, spec | `validation.tokens.json`, `validation.qa.json` |
 | 6 | `sk-create-report` | **Assembler** | everything | `output.json` |
 
 ### Control flow & guarantees

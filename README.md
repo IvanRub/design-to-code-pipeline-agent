@@ -39,10 +39,10 @@ it invokes one skill, lets that skill drive its own subagents to completion, the
 | Step | Skill | Role(s) | In | Out |
 |------|-------|---------|----|-----|
 | 1 | `sk-extract` | **Parser** | brief | `extraction.json` |
-| 2 | `sk-audit` | **States Analyst** ‖ **A11y Auditor** *(parallel)* | extraction | `gaps.states.json`, `gaps.a11y.json` |
+| 2 | `sk-audit` | **States Analyst** ‖ **A11y Auditor** | extraction | `gaps.states.json`, `gaps.a11y.json` |
 | 3 | `sk-create-spec` | **Spec Author** | extraction + gaps | `spec.json` *(frozen contract)* |
 | 4 | `sk-create-implementation` | **Code Generator** | spec | `<Component>/*` + `generated.meta.json` |
-| 5 | `sk-validate-implementation` | **Token Validator** ‖ **QA Reviewer** *(parallel)* | code, spec | `validation.tokens.json`, `validation.qa.json` |
+| 5 | `sk-validate-implementation` | **Token Validator** ‖ **QA Reviewer** | code, spec | `validation.tokens.json`, `validation.qa.json` |
 | 6 | `sk-create-report` | **Assembler** | everything | `output.json` |
 
 ### Why multi-agent, not one magic prompt
@@ -50,8 +50,6 @@ it invokes one skill, lets that skill drive its own subagents to completion, the
   rationalizations, only its output — so real bugs surface instead of being argued away.
 - **Spec-first** → a single frozen contract makes "did the code do the right thing?" a mechanical
   check, and lets the repair loop fix code without ever touching the requirements.
-- **Two specialists in parallel** at gap-analysis and validation — independent perspectives,
-  less wall-clock.
 
 ---
 

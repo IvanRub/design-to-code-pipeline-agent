@@ -4,14 +4,14 @@
   "description": "Spec-first multi-agent pipeline: UI component brief → spec → React/TS code → validation",
   "type": "commonjs",
   "bin": {
-    "d2c": "dist/cli.js"
+    "d2c": "dist/orchestrate.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "pipeline": "ts-node src/cli.ts",
-    "orchestrate": "ts-node --project scripts/tsconfig.json scripts/orchestrate.ts",
-    "start": "node dist/cli.js",
-    "example": "ts-node src/cli.ts examples/payment-form.md"
+    "pipeline": "ts-node scripts/orchestrate.ts",
+    "orchestrate": "ts-node scripts/orchestrate.ts",
+    "start": "node dist/orchestrate.js",
+    "example": "ts-node scripts/orchestrate.ts examples/payment-form.md"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",

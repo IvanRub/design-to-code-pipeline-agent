@@ -1,0 +1,113 @@
+{
+  "component": {
+    "name": "PaymentCard",
+    "type": "card",
+    "business_context": "Merchant dashboard widget displaying a saved payment method, allowing the merchant to select a default card or delete a saved card."
+  },
+  "extraction": {
+    "specified_states": ["default", "selected"],
+    "tokens_referenced": [],
+    "constraints": [
+      "Card number must be displayed masked, showing only the last 4 digits, in the format '**** **** **** 1234'",
+      "Must display the expiry date",
+      "Must display the cardholder name",
+      "Must display a card brand icon supporting at least Visa, Mastercard, and Amex",
+      "User can select the card",
+      "User can delete the card"
+    ]
+  },
+  "gap_analysis": {
+    "missing_states": ["loading", "empty", "error"],
+    "accessibility_gaps": [
+      "No token specified for the 'selected' state indicator (tokens_referenced is empty); if implemented as a color-only change it fails WCAG 1.4.1 Use of Color and needs a non-color cue plus aria-pressed/aria-selected/aria-checked",
+      "color.border.default (#D8DEE9) on color.surface.card/color.background.default (#FFFFFF) = ~1.3:1, FAILS the 3:1 minimum for UI component/non-text borders (WCAG 1.4.11) if used alone to convey the card's default or selected boundary",
+      "color.text.disabled (#94A3B8) on white = ~2.8:1, FAILS 4.5:1 for body text — must not be used for masked card number, expiry, or cardholder name in the default (non-disabled) state",
+      "If color.action.primary.default (#1A5CFF) is adopted as an ad-hoc 'selected' border on white it is ~4.0:1 (passes 3:1 for non-text/UI), but this is an unmapped/guessed token choice since no selection token exists in the design system reference for this component",
+      "No semantic role specified for the card's selectable behavior (e.g., role=\"radio\"/aria-checked within role=\"radiogroup\", or aria-selected within role=\"listbox\"/role=\"group\", or aria-pressed if a toggle button) — brief only says 'user can select the card'",
+      "Masked card number ('**** **** **** 1234') has no accessible-name strategy; screen readers may read masking glyphs literally instead of an announcement like 'Card ending in 1234'",
+      "Card brand icon (Visa/Mastercard/Amex) has no accessible-name requirement; per the Icon component's aria-hidden default it risks being unlabeled instead of exposing the brand as an accessible name or visually-hidden text",
+      "Delete action (icon-only) has no aria-label requirement (e.g., 'Delete card ending in 1234') and no confirmation step (role=\"alertdialog\") despite being a destructive, hard-to-reverse action on sensitive payment data",
+      "No aria-live/role=\"status\" specified to announce the result of select or delete actions to screen reader users",
+      "No visible focus ring specified for the selectable card region or the delete control (should use color.focus.ring)",
+      "No keyboard interaction model specified: Enter/Space to select the card, Tab order between card body and delete control, Escape to dismiss any delete-confirmation surface",
+      "No requirement that the delete icon-button remain independently focusable/operable and not nested as interactive-in-interactive with the card's own select action",
+      "No prefers-reduced-motion guidance for the selection-state transition (e.g., highlight/border animation) or for any card-removal animation on delete",
+      "No async/loading state defined for the delete action (e.g., Spinner while a delete request is in flight) or its announcement via role=\"status\""
+    ],
+    "responsive_gaps": [
+      "below breakpoint.sm: card stacks brand icon above masked number/name/expiry to avoid truncation",
+      "below breakpoint.md: action controls (select, delete) reflow below card details instead of inline trailing position",
+      "below breakpoint.lg: dashboard grid collapses from multi-column to single-column card list",
+      "above breakpoint.xl: card width is capped and centered within its grid cell rather than stretching full width"
+    ],
+    "recommendations": [
+      "Add a loading state that renders Skeleton placeholders for the masked number, expiry, cardholder name, and brand icon.",
+      "Add an empty state for when no saved payment card exists, with an affordance to add a new card and no error styling.",
+      "Add an error state (e.g. failed to load or delete) using Alert with role=\"alert\", surfaced without discarding the card's last-known data if present.",
+      "Bind the delete action to a confirmation step so a stray click cannot silently remove a saved payment method.",
+      "Expose selection state via a prop-driven boolean (e.g. isSelected) with a visible focus/selected border using color.border.strong or color.action.primary.default, never via internal-only state.",
+      "Ensure the card brand icon has an accessible name (e.g. aria-label=\"Visa\") since it conveys meaning, not just decoration.",
+      "Define layout behavior for each breakpoint.* token so the merchant dashboard grid does not silently overflow or truncate the masked card number on narrow viewports.",
+      "Add an explicit 'selected' visual token/spec (e.g., border-color: var(--color-action-primary-default) at >=2px plus a checkmark icon) so selection is never conveyed by color alone",
+      "Model the card group as role=\"radiogroup\" of role=\"radio\" cards (or role=\"listbox\"/aria-selected items) with aria-checked/aria-selected bound to the `selected` state prop, and support Space/Enter to select",
+      "Give the masked number an aria-label (e.g., 'Card ending in 1234') separate from its visible masked text, and expose the brand icon's accessible name (e.g., aria-label=\"Visa\") rather than aria-hidden",
+      "Make the delete control a distinct, independently focusable icon-button with aria-label=\"Delete card ending in {last4}\", require a confirmation dialog (role=\"alertdialog\") before removal, and announce success/failure via role=\"status\"",
+      "Apply var(--color-focus-ring) as a visible focus-visible outline on both the selectable card and the delete button",
+      "Wrap any selection or removal animation in `@media (prefers-reduced-motion: reduce)` to disable/shorten it, and show a Spinner with role=\"status\" while a delete request is pending"
+    ]
+  },
+  "generated_code": {
+    "framework": "React 18 + TypeScript",
+    "files": [
+      { "filename": "PaymentCard/PaymentCard.tsx", "content": "See /Users/stivaner/Projects/design-to-code-pipeline-agent-2/src/PaymentCard/PaymentCard.tsx" },
+      { "filename": "PaymentCard/PaymentCard.module.css", "content": "See /Users/stivaner/Projects/design-to-code-pipeline-agent-2/src/PaymentCard/PaymentCard.module.css" },
+      { "filename": "PaymentCard/PaymentCard.stories.tsx", "content": "See /Users/stivaner/Projects/design-to-code-pipeline-agent-2/src/PaymentCard/PaymentCard.stories.tsx" },
+      { "filename": "PaymentCard/PaymentCard.test.tsx", "content": "See /Users/stivaner/Projects/design-to-code-pipeline-agent-2/src/PaymentCard/PaymentCard.test.tsx" },
+      { "filename": "PaymentCard/index.ts", "content": "See /Users/stivaner/Projects/design-to-code-pipeline-agent-2/src/PaymentCard/index.ts" }
+    ],
+    "states_covered": ["default", "selected", "loading", "empty", "error"],
+    "tokens_used": [
+      "font.family.sans",
+      "space.1",
+      "space.2",
+      "space.3",
+      "space.4",
+      "color.surface.card",
+      "color.border.strong",
+      "radius.md",
+      "shadow.sm",
+      "shadow.md",
+      "color.text.primary",
+      "color.text.secondary",
+      "color.focus.ring",
+      "color.action.primary.default",
+      "color.surface.overlay",
+      "font.size.md",
+      "font.size.sm",
+      "font.weight.medium",
+      "font.weight.regular",
+      "font.line-height.normal"
+    ]
+  },
+  "validation": {
+    "token_compliance": true,
+    "states_coverage": "5/5",
+    "accessibility_score": "B (2 blocking, 3 minor)",
+    "issues_found": [
+      "Delete-confirmation dialog (role=\"alertdialog\", isDeleteConfirmOpen) is rendered as a sibling of the radio card, not nested inside it, and the only Escape-key handler (handleKeyDown) is attached to the role=\"radio\" div. Once focus moves into the Cancel/Confirm buttons inside the dialog, pressing Escape never reaches handleKeyDown, so 'Escape cancels and returns focus to the delete Button' (spec.delete_flow, spec.accessibility) is not actually reachable via keyboard.",
+      "Spec states loading state a11y: 'delete Button is disabled while loading', but the loading branch (state==='loading') returns early and renders no Button/.actions at all — the disabled delete control does not exist in the DOM, so this spec requirement is unimplemented and untestable as written.",
+      "The entire delete_flow (isDeleteRequest -> isDeleteConfirmOpen alertdialog -> Confirm/Cancel -> isDeleting Spinner) has zero test coverage in PaymentCard.test.tsx and zero story coverage in PaymentCard.stories.tsx — none of Confirm, Cancel, Escape-cancel, focus-return-to-delete-button, or the isDeleting Spinner/disabled-controls behavior is exercised anywhere.",
+      "Component never composes the 'Card' primitive from @acme/ui despite spec.composes listing it — the card, confirm surface, and all containers are raw <div>s. Not a hallucinated import, but a spec-declared composition that is silently skipped.",
+      "axe accessibility smoke test only renders the 'default' state; 'selected', 'loading', 'empty', 'error', and the delete-confirmation surface are never axe-checked, so violations specific to those states (e.g. the alertdialog's missing aria-modal, the error-state radio still carrying role=\"radio\"/aria-checked while non-interactive) would not be caught."
+    ],
+    "hallucinations_caught": [],
+    "fix_list": [
+      "Move the Escape-to-cancel keydown handling onto the confirmation overlay/dialog itself (e.g. onKeyDown on the .overlay or .confirmSurface div, or a document-level listener scoped to isDeleteConfirmOpen) so Escape works regardless of which control inside the dialog currently has focus.",
+      "Render the delete Button (disabled) in the loading-state branch instead of omitting the .actions/Button entirely, per spec.states.loading a11y text, and add a test asserting the delete Button is present and disabled while state==='loading'.",
+      "Add test(s) exercising the delete-confirmation flow: opening isDeleteConfirmOpen renders role=\"alertdialog\" with the expected accessible name, Confirm calls onDeleteConfirm, Cancel calls onDeleteCancel, Escape calls onDeleteCancel and returns focus to the delete Button, and isDeleting renders the Spinner (role=\"status\", aria-label=\"Deleting card\") with Confirm/Cancel disabled.",
+      "Add a Storybook story for the delete-confirmation surface (isDeleteConfirmOpen: true, and a second variant with isDeleting: true) so it is covered as a visual-regression fixture per the project's testing conventions.",
+      "Either compose the @acme/ui Card primitive for the card/confirm-surface containers or explicitly document in generated.meta.json why Card was intentionally not used, so the spec.composes contract is not silently ignored.",
+      "Extend the axe smoke test (or add additional axe assertions) to cover at least the 'error' state and the open delete-confirmation dialog, since those introduce distinct roles (alert, alertdialog) not present in the 'default' state check."
+    ]
+  }
+}

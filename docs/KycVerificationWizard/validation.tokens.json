@@ -1,0 +1,45 @@
+{
+  "token_compliance": true,
+  "hallucinations_caught": [],
+  "misuse_warnings": [
+    "Responsive media queries use hardcoded px literals (767px, 1024px) instead of referencing breakpoint.md (768px) / breakpoint.lg values; breakpoint.lg is not even declared in spec.json's tokens list (only breakpoint.sm and breakpoint.md are), so the 1024px large-screen query has no corresponding spec token at all. Accepted per task convention (breakpoints are not expressible as CSS custom properties in a media query), but flagged for spec/token alignment.",
+    "Spec tokens color.action.primary.disabled, color.text.disabled, and color.border.default (declared for the 'disabled' state) and color.action.primary.hover / color.action.primary.active (declared for 'next-navigation') are never referenced as var(--...) in KycVerificationWizard.module.css. This is not a hallucination or a raw literal, but expected coverage gaps because disabled/hover/active styling is delegated to the composed Button/Input catalog components rather than re-implemented in this module's CSS. No misuse of the tokens occurs; they are simply unused at this layer.",
+    "No 'subtle' success/warning background token exists in tokens.json (only color.feedback.error.subtle is defined); spec.json documents (open_questions) that verification-pending-review and verification-approved fall back to the neutral color.background.subtle for their Alert backgrounds instead of a tinted success/warning surface. This is a documented, intentional deviation carried from the frozen spec, not a hallucination introduced by the generator — Alert's actual background is owned by the @acme/ui component internals, not this CSS module."
+  ],
+  "raw_literals_found": [],
+  "raw_literal_notes": [
+    "1px/-1px in .visuallyHidden and .visuallyHiddenInput (lines 11-19, 21-31) — standard sr-only clip idiom, not a design-token value, accepted.",
+    "1px border widths in .stepSegmentMarker (line 64), .dropzone (line 140), .fileRow (line 179) — hairline border width, accepted per project convention; color portion of each border correctly uses a var(--color-...) token.",
+    "2px / 2px offset focus outlines in .stepSegment:focus-visible (lines 52-55), .stepHeading:focus-visible (lines 108-111), .dropzone:focus-visible (lines 148-151) — matches spec's 'focus' state requirement of a >=2px focus-visible outline; color correctly uses var(--color-focus-ring).",
+    "767px in '@media (max-width: 767px)' (line 234) and 1024px in '@media (min-width: 1024px)' (line 249) — media-query breakpoints, which cannot be expressed via var(--...) in a media query condition; accepted per project convention, see misuse_warnings for the breakpoint.lg/spec-token alignment note.",
+    "No #hex, rgb(), or hsl() literals found anywhere in KycVerificationWizard.module.css."
+  ],
+  "css_vars_checked": [
+    "--space-6", "--space-4", "--space-3", "--space-2", "--space-8",
+    "--font-family-sans", "--font-size-xs", "--font-size-sm", "--font-size-lg",
+    "--font-weight-regular", "--font-weight-medium", "--font-weight-bold",
+    "--font-line-height-tight",
+    "--color-background-default", "--color-background-subtle",
+    "--color-border-default", "--color-border-strong",
+    "--color-text-primary", "--color-text-secondary", "--color-text-on-action",
+    "--color-action-primary-default", "--color-feedback-success", "--color-feedback-error",
+    "--color-focus-ring",
+    "--radius-full", "--radius-md"
+  ],
+  "css_vars_verdict": "All 26 distinct CSS custom properties referenced in KycVerificationWizard.module.css resolve to a cssVar entry in design-system/tokens.json. No hallucinated variables.",
+  "imports_checked": [
+    { "file": "KycVerificationWizard.tsx", "import": "{ Alert, Button, Card, FormField, Icon, Input, Spinner } from '@acme/ui'", "status": "all present in components.json" }
+  ],
+  "imports_verdict": "No hallucinated component imports. useState/useEffect/useMemo/useRef from 'react' and native <input>/<img>/<div> are not catalog components and are correctly not imported from @acme/ui. Select and Checkbox from the catalog are unused, which is expected (not required by this component's spec).",
+  "generated_meta_tokens_used_check": "Every entry in generated.meta.json's tokens_used array exists in design-system/tokens.json (color.background.default, color.background.subtle, color.border.default, color.border.strong, color.text.primary, color.text.secondary, color.text.on-action, color.action.primary.default, color.feedback.error, color.feedback.success, color.focus.ring, space.2, space.3, space.4, space.6, space.8, radius.md, radius.full, font.family.sans, font.size.xs, font.size.sm, font.size.lg, font.weight.regular, font.weight.medium, font.weight.bold, font.line-height.tight). No fabricated token names claimed.",
+  "issues": [
+    {
+      "severity": "info",
+      "description": "breakpoint.lg (1024px) is used in a media query but is not declared in spec.json's tokens array (only breakpoint.sm and breakpoint.md are listed there), even though it is used in spec.json's responsive[] behavior description and tokens.json does define breakpoint.lg. Recommend adding breakpoint.lg to spec.json's tokens list for full traceability, or documenting the responsive breakpoint choice explicitly against the design-system breakpoint table."
+    },
+    {
+      "severity": "info",
+      "description": "Several spec-declared tokens for 'disabled' and 'next-navigation' hover/active states are not present as var(--...) in the CSS module because that styling is delegated to the composed Button/Input components from @acme/ui. This is expected under a composition-based architecture and is not a compliance failure, but is noted so a reviewer does not mistake it for missing token coverage."
+    }
+  ]
+}

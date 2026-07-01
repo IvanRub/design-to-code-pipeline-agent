@@ -7,7 +7,7 @@ argument-hint: <path to extraction.json>
 # Gap analysis
 
 Find what the brief omitted, on two independent axes, before any spec is written. The two
-analysts run **in parallel** and never see each other's output — independence is the point.
+analysts run **in strict sequence** and never see each other's output — independence is the point.
 
 ## Inputs
 - $ARGUMENTS
@@ -16,7 +16,7 @@ analysts run **in parallel** and never see each other's output — independence 
 
 ### Step 1. Identifies missing UI component states and responsiveness gaps
 
-Call the Task Tool (switch_mode) to check for missing states & responsive gaps:
+Call the Task Tool to check for missing states & responsive gaps:
 
 - `subagent_type`: `states-analyst`
 - `prompt`: "Input data (the specified brief): $ARGUMENTS.
@@ -26,7 +26,7 @@ Wait for the agent to complete and save the list of files from its response.
 
 ### Step 2. Check UI components for compliance with WCAG 2.2 AA standards.
 
-Call the Task Tool (switch_mode) to check for WCAG 2.2 AA accessibility gaps:
+Call the Task Tool to check for WCAG 2.2 AA accessibility gaps:
 
 - `subagent_type`: `a11y-auditor`
 - `prompt`: "Input data (the specified brief): $ARGUMENTS.

@@ -1,0 +1,26 @@
+{
+  "accessibility_gaps": [
+    "No token specified for the 'selected' state indicator (tokens_referenced is empty); if implemented as a color-only change it fails WCAG 1.4.1 Use of Color and needs a non-color cue plus aria-pressed/aria-selected/aria-checked",
+    "color.border.default (#D8DEE9) on color.surface.card/color.background.default (#FFFFFF) = ~1.3:1, FAILS the 3:1 minimum for UI component/non-text borders (WCAG 1.4.11) if used alone to convey the card's default or selected boundary",
+    "color.text.disabled (#94A3B8) on white = ~2.8:1, FAILS 4.5:1 for body text — must not be used for masked card number, expiry, or cardholder name in the default (non-disabled) state",
+    "If color.action.primary.default (#1A5CFF) is adopted as an ad-hoc 'selected' border on white it is ~4.0:1 (passes 3:1 for non-text/UI), but this is an unmapped/guessed token choice since no selection token exists in the design system reference for this component",
+    "No semantic role specified for the card's selectable behavior (e.g., role=\"radio\"/aria-checked within role=\"radiogroup\", or aria-selected within role=\"listbox\"/role=\"group\", or aria-pressed if a toggle button) — brief only says 'user can select the card'",
+    "Masked card number ('**** **** **** 1234') has no accessible-name strategy; screen readers may read masking glyphs literally instead of an announcement like 'Card ending in 1234'",
+    "Card brand icon (Visa/Mastercard/Amex) has no accessible-name requirement; per the Icon component's aria-hidden default it risks being unlabeled instead of exposing the brand as an accessible name or visually-hidden text",
+    "Delete action (icon-only) has no aria-label requirement (e.g., 'Delete card ending in 1234') and no confirmation step (role=\"alertdialog\") despite being a destructive, hard-to-reverse action on sensitive payment data",
+    "No aria-live/role=\"status\" specified to announce the result of select or delete actions to screen reader users",
+    "No visible focus ring specified for the selectable card region or the delete control (should use color.focus.ring)",
+    "No keyboard interaction model specified: Enter/Space to select the card, Tab order between card body and delete control, Escape to dismiss any delete-confirmation surface",
+    "No requirement that the delete icon-button remain independently focusable/operable and not nested as interactive-in-interactive with the card's own select action",
+    "No prefers-reduced-motion guidance for the selection-state transition (e.g., highlight/border animation) or for any card-removal animation on delete",
+    "No async/loading state defined for the delete action (e.g., Spinner while a delete request is in flight) or its announcement via role=\"status\""
+  ],
+  "recommendations": [
+    "Add an explicit 'selected' visual token/spec (e.g., border-color: var(--color-action-primary-default) at >=2px plus a checkmark icon) so selection is never conveyed by color alone",
+    "Model the card group as role=\"radiogroup\" of role=\"radio\" cards (or role=\"listbox\"/aria-selected items) with aria-checked/aria-selected bound to the `selected` state prop, and support Space/Enter to select",
+    "Give the masked number an aria-label (e.g., 'Card ending in 1234') separate from its visible masked text, and expose the brand icon's accessible name (e.g., aria-label=\"Visa\") rather than aria-hidden",
+    "Make the delete control a distinct, independently focusable icon-button with aria-label=\"Delete card ending in {last4}\", require a confirmation dialog (role=\"alertdialog\") before removal, and announce success/failure via role=\"status\"",
+    "Apply var(--color-focus-ring) as a visible focus-visible outline on both the selectable card and the delete button",
+    "Wrap any selection or removal animation in `@media (prefers-reduced-motion: reduce)` to disable/shorten it, and show a Spinner with role=\"status\" while a delete request is pending"
+  ]
+}

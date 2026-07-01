@@ -1,0 +1,260 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  font-family: var(--font-family-sans);
+  background-color: var(--color-background-default);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.visuallyHiddenInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Step indicator */
+.stepIndicator {
+  display: flex;
+  gap: var(--space-4);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stepSegment {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.stepSegment:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.stepSegmentMarker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-strong);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.stepSegmentLabel {
+  font-weight: var(--font-weight-regular);
+}
+
+.stepSegmentCurrent {
+  color: var(--color-text-primary);
+}
+
+.stepSegmentCurrent .stepSegmentMarker {
+  background-color: var(--color-action-primary-default);
+  border-color: var(--color-action-primary-default);
+  color: var(--color-text-on-action);
+  font-weight: var(--font-weight-bold);
+}
+
+.stepSegmentCurrent .stepSegmentLabel {
+  font-weight: var(--font-weight-bold);
+}
+
+.stepSegmentCompleted .stepSegmentMarker {
+  background-color: var(--color-feedback-success);
+  border-color: var(--color-feedback-success);
+  color: var(--color-text-on-action);
+}
+
+.stepSegmentUpcoming .stepSegmentMarker {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-secondary);
+}
+
+/* Step heading */
+.stepHeading {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--font-line-height-tight);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-6) 0;
+}
+
+.stepHeading:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Personal info fields */
+.fieldsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Upload section */
+.uploadSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.dropzoneDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-8);
+  border: 1px dashed var(--color-border-default);
+  border-radius: var(--radius-md);
+  background-color: var(--color-background-subtle);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  text-align: center;
+}
+
+.dropzone:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.dropzoneActive {
+  border-color: var(--color-action-primary-default);
+  background-color: var(--color-background-subtle);
+}
+
+.dropzoneError {
+  border-color: var(--color-feedback-error);
+}
+
+.dropzoneText {
+  font-size: var(--font-size-sm);
+}
+
+.loadingRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+}
+
+.fileInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  color: var(--color-text-primary);
+}
+
+.fileName {
+  font-weight: var(--font-weight-medium);
+}
+
+.fileSize {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+/* Selfie section */
+.selfieSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.selfiePreview {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+}
+
+.verificationPanel {
+  width: 100%;
+}
+
+/* Navigation */
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .root * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Responsive: below breakpoint.md, stack fields and reorder nav */
+@media (max-width: 767px) {
+  .fieldsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .navigation {
+    flex-direction: column-reverse;
+  }
+
+  .stepSegmentLabel {
+    display: none;
+  }
+}
+
+/* Responsive: breakpoint.lg and above, 2-column fields + side-by-side nav */
+@media (min-width: 1024px) {
+  .fieldsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+  }
+
+  .navigation {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}

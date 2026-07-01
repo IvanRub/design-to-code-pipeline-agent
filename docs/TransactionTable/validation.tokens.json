@@ -1,0 +1,6 @@
+{
+  "token_compliance": true,
+  "hallucinations_caught": [],
+  "misuse_warnings": [],
+  "raw_literals_found": []
+}

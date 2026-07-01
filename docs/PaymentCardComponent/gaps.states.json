@@ -1,0 +1,18 @@
+{
+  "missing_states": ["loading", "empty", "error"],
+  "responsive_gaps": [
+    "below breakpoint.sm: card stacks brand icon above masked number/name/expiry to avoid truncation",
+    "below breakpoint.md: action controls (select, delete) reflow below card details instead of inline trailing position",
+    "below breakpoint.lg: dashboard grid collapses from multi-column to single-column card list",
+    "above breakpoint.xl: card width is capped and centered within its grid cell rather than stretching full width"
+  ],
+  "recommendations": [
+    "Add a loading state that renders Skeleton placeholders for the masked number, expiry, cardholder name, and brand icon.",
+    "Add an empty state for when no saved payment card exists, with an affordance to add a new card and no error styling.",
+    "Add an error state (e.g. failed to load or delete) using Alert with role=\"alert\", surfaced without discarding the card's last-known data if present.",
+    "Bind the delete action to a confirmation step so a stray click cannot silently remove a saved payment method.",
+    "Expose selection state via a prop-driven boolean (e.g. isSelected) with a visible focus/selected border using color.border.strong or color.action.primary.default, never via internal-only state.",
+    "Ensure the card brand icon has an accessible name (e.g. aria-label=\"Visa\") since it conveys meaning, not just decoration.",
+    "Define layout behavior for each breakpoint.* token so the merchant dashboard grid does not silently overflow or truncate the masked card number on narrow viewports."
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "component": {
+    "name": "TransactionTable",
+    "type": "table",
+    "business_context": "Displays a fintech user's transaction history (date, amount, status, merchant name, payment method) with sorting, pagination, and row-level navigation into transaction details."
+  },
+  "props": [
+    { "name": "transactions", "type": "Transaction[]", "required": true },
+    { "name": "sortColumn", "type": "'date'|'amount'|'status'|'merchant'|'paymentMethod'|null", "required": false },
+    { "name": "sortDirection", "type": "'ascending'|'descending'|'none'", "required": false },
+    { "name": "onSortChange", "type": "(column: string, direction: 'ascending'|'descending') => void", "required": false },
+    { "name": "page", "type": "number", "required": true },
+    { "name": "pageSize", "type": "25|50|100", "required": true },
+    { "name": "totalCount", "type": "number", "required": true },
+    { "name": "onPageChange", "type": "(page: number) => void", "required": true },
+    { "name": "onPageSizeChange", "type": "(pageSize: 25|50|100) => void", "required": true },
+    { "name": "onRowClick", "type": "(transactionId: string) => void", "required": false },
+    { "name": "state", "type": "'idle'|'loading'|'empty'|'error'", "required": true },
+    { "name": "errorMessage", "type": "string", "required": false },
+    { "name": "isRowNavigating", "type": "boolean", "required": false }
+  ],
+  "composes": ["Skeleton", "Alert", "Select", "Button", "Icon"],
+  "states": [
+    {
+      "name": "default",
+      "trigger": "state==='idle' && transactions.length > 0",
+      "tokens": [
+        "color.surface.card", "color.border.default", "color.text.primary", "color.text.secondary",
+        "font.family.sans", "font.size.sm", "font.weight.regular", "space.3", "space.4"
+      ],
+      "a11y": "Rendered as a native <table> with a visually-hidden <caption> (or aria-label) reading 'Transactions'; each column uses <th scope=\"col\">."
+    },
+    {
+      "name": "sorted",
+      "trigger": "sortColumn !== null && sortDirection !== 'none'",
+      "tokens": [
+        "color.text.primary", "color.action.primary.default", "color.focus.ring", "font.weight.medium"
+      ],
+      "a11y": "Each sortable <th> wraps its label in a <button> (natively focusable/operable); the active column's <th> gets aria-sort='ascending'|'descending', all others aria-sort='none'. The button's accessible name states current state, e.g. 'Amount, sorted ascending, activate to sort descending'. A visually-hidden role='status' aria-live='polite' region announces 'Sorted by <column> <direction>' on change. Focus ring on the sort button uses color.focus.ring."
+    },
+    {
+      "name": "paginated",
+      "trigger": "totalCount > pageSize",
+      "tokens": [
+        "color.text.primary", "color.text.secondary", "color.action.primary.default",
+        "color.action.primary.disabled", "color.focus.ring", "space.2", "space.4", "radius.sm"
+      ],
+      "a11y": "Pagination controls are wrapped in <nav aria-label='Pagination'>; the active page control has aria-current='page'; previous/next controls are icon buttons with aria-label='Previous page' / 'Next page' and are disabled (not merely visually muted) at the first/last page. The page-size Select is labeled via FormField/associated <label> reading 'Rows per page'. Sort order and page size persist across page changes (prop-driven, owned by the parent via onPageChange/onPageSizeChange). The same aria-live='polite' status region used for sorting also announces 'Showing rows X-Y of Z' on page or page-size change."
+    },
+    {
+      "name": "status:pending",
+      "trigger": "row.status === 'pending'",
+      "tokens": ["color.feedback.warning", "color.background.subtle", "color.border.default", "radius.full", "font.size.xs", "font.weight.medium"],
+      "a11y": "Rendered as a text+color chip ('Pending') never color alone (WCAG 1.4.1); color.feedback.warning text on color.background.subtle background, radius.full pill, color.border.default outline for boundary contrast."
+    },
+    {
+      "name": "status:completed",
+      "trigger": "row.status === 'completed'",
+      "tokens": ["color.feedback.success", "color.background.subtle", "color.border.default", "radius.full", "font.size.xs", "font.weight.medium"],
+      "a11y": "Text+color chip ('Completed'); color.feedback.success text on color.background.subtle background, radius.full pill, color.border.default outline."
+    },
+    {
+      "name": "status:failed",
+      "trigger": "row.status === 'failed'",
+      "tokens": ["color.feedback.error", "color.background.subtle", "color.border.default", "radius.full", "font.size.xs", "font.weight.medium"],
+      "a11y": "Text+color chip ('Failed'); color.feedback.error text on color.background.subtle background, radius.full pill, color.border.default outline."
+    },
+    {
+      "name": "status:refunded",
+      "trigger": "row.status === 'refunded'",
+      "tokens": ["color.text.secondary", "color.background.subtle", "color.border.default", "radius.full", "font.size.xs", "font.weight.medium"],
+      "a11y": "Text+color chip ('Refunded'); no dedicated feedback token exists for a neutral/info status, so color.text.secondary on color.background.subtle with a color.border.default outline is used as the nearest safe fallback (see open_questions) — contrast verified at approx 7.1:1 for text."
+    },
+    {
+      "name": "row-clickable",
+      "trigger": "typeof onRowClick === 'function'",
+      "tokens": ["color.focus.ring", "color.background.subtle", "color.action.primary.default"],
+      "a11y": "Each clickable row gets role='button', tabIndex=0, an accessible name derived from its cells (e.g. 'Transaction on {date}, {amount}, {status}, view details'), and onKeyDown handling Enter/Space in addition to onClick. A visible focus ring uses color.focus.ring. Hover/focus background uses color.background.subtle. When isRowNavigating is true for a row, the row is marked aria-disabled='true' and pointer/keyboard activation is suppressed while its detail view is being fetched, so the interaction is never a hidden internal-only state."
+    },
+    {
+      "name": "loading",
+      "trigger": "state==='loading'",
+      "tokens": ["color.background.subtle", "color.border.default", "radius.sm", "space.3"],
+      "a11y": "Renders skeleton rows via the Skeleton primitive matching the 5 declared columns (date, amount, status, merchant, payment method), wrapped in a visually-hidden role='status' aria-live='polite' region announcing 'Loading transactions'. Skeleton shimmer (if any) respects prefers-reduced-motion, rendering as a static placeholder when reduced motion is requested."
+    },
+    {
+      "name": "empty",
+      "trigger": "state==='idle' && transactions.length === 0",
+      "tokens": ["color.text.secondary", "font.size.sm", "space.6"],
+      "a11y": "Table body is replaced by a plain text message (e.g. 'No transactions match your filters') inside the same table region, announced via role='status' aria-live='polite'. No error styling or icon-of-alarm is used to avoid implying failure."
+    },
+    {
+      "name": "error",
+      "trigger": "state==='error'",
+      "tokens": ["color.feedback.error", "color.feedback.error.subtle", "space.4", "radius.md"],
+      "a11y": "Rendered using the Alert primitive with tone='error' and role='alert' (assertive), distinct from the per-row 'failed' status badge. errorMessage is passed as the Alert's message content; the table region is replaced (not overlaid) so screen reader users are not left with stale row data."
+    }
+  ],
+  "tokens": [
+    "color.background.default",
+    "color.background.subtle",
+    "color.surface.card",
+    "color.border.default",
+    "color.border.strong",
+    "color.text.primary",
+    "color.text.secondary",
+    "color.text.disabled",
+    "color.action.primary.default",
+    "color.action.primary.disabled",
+    "color.feedback.error",
+    "color.feedback.error.subtle",
+    "color.feedback.success",
+    "color.feedback.warning",
+    "color.focus.ring",
+    "space.1",
+    "space.2",
+    "space.3",
+    "space.4",
+    "space.6",
+    "radius.sm",
+    "radius.md",
+    "radius.full",
+    "font.family.sans",
+    "font.size.xs",
+    "font.size.sm",
+    "font.weight.regular",
+    "font.weight.medium",
+    "font.line-height.normal",
+    "breakpoint.sm",
+    "breakpoint.md",
+    "breakpoint.lg"
+  ],
+  "responsive": [
+    {
+      "breakpoint": "breakpoint.lg",
+      "behavior": "Below breakpoint.lg, the 5-column table (date, amount, status, merchant name, payment method) becomes horizontally scrollable within a container that has overflow-x: auto, preserving native <table> semantics (no column dropping) so assistive tech and sort/pagination controls remain unaffected."
+    },
+    {
+      "breakpoint": "breakpoint.md",
+      "behavior": "Below breakpoint.md, rows collapse into a card-per-transaction layout (each row becomes a Card with labeled key/value fields for date, amount, status, merchant, payment method), replacing the horizontal-scroll table. Sortable-header semantics are dropped in this layout in favor of a single visible 'Sort by' control that triggers the same onSortChange."
+    },
+    {
+      "breakpoint": "breakpoint.sm",
+      "behavior": "Below breakpoint.sm, pagination controls collapse to a compact 'Previous / Next' control pair plus current page indicator (e.g. 'Page 2 of 8'); the page-size Select remains visible and labeled ('Rows per page') and reachable without additional interaction."
+    }
+  ],
+  "accessibility": [
+    "Native <table> with a visually-hidden <caption> or aria-label identifying it as 'Transactions'.",
+    "All column headers use <th scope=\"col\">; sortable headers wrap their label in a <button> with aria-sort on the parent <th> ('ascending'|'descending'|'none').",
+    "Sort button accessible name communicates current sort state and the action, e.g. 'Amount, sorted ascending, activate to sort descending'.",
+    "Clickable rows are keyboard-operable: role='button', tabIndex=0, Enter/Space via onKeyDown, and an accessible name summarizing the row's cells; visible focus ring via color.focus.ring on all sortable headers and clickable rows.",
+    "Pagination controls sit inside <nav aria-label='Pagination'>; active page uses aria-current='page'; prev/next controls have aria-label ('Previous page'/'Next page') and are disabled (not just styled) at the bounds.",
+    "Page-size Select has a programmatically associated label reading 'Rows per page'.",
+    "A single visually-hidden role='status' aria-live='polite' region announces sort changes ('Sorted by <column> <direction>'), page/page-size changes ('Showing rows X-Y of Z'), and loading transitions ('Loading transactions').",
+    "Status badges always pair a text label with color (never color alone) to satisfy WCAG 1.4.1 (Use of Color); each status uses a distinct token (pending: color.feedback.warning, completed: color.feedback.success, failed: color.feedback.error, refunded: color.text.secondary fallback — see open_questions) plus a color.border.default outline so the chip boundary reads at sufficient contrast independent of fill color.",
+    "Error state uses the Alert primitive with tone='error' role='alert' (assertive), distinct from the per-row 'failed' status badge, so users are not left interpreting row-level failures as a fetch-level error or vice versa.",
+    "Loading state uses the Skeleton primitive for row placeholders and shares the aria-live='polite' status region so the loading transition is announced, not silently swapped in.",
+    "Any skeleton shimmer or sort-transition animation respects prefers-reduced-motion, falling back to a static (non-animated) presentation.",
+    "Date and currency amount cells include a visually-hidden full-text alternative (e.g. aria-label with an unabbreviated locale string) whenever the visible format is abbreviated or symbol-only, so screen readers do not read ambiguous shorthand."
+  ],
+  "open_questions": [
+    "No 'Table' primitive exists in design-system/components.json. The spec mandates a native <table>/<th scope>/<caption> structure built directly rather than a catalog primitive; recommend adding a 'Table' primitive to the catalog in a future design-system iteration.",
+    "No 'Badge' primitive exists in design-system/components.json. Status chips are specified as a custom composed element styled purely from tokens (radius.full, font.size.xs, font.weight.medium, plus the per-status color token) rather than a catalog import; recommend adding a 'Badge' primitive to the catalog.",
+    "No design-system token exists for a neutral/info status color suitable for 'refunded'. Chosen fallback: color.text.secondary on color.background.subtle with a color.border.default outline (contrast ~7.1:1 for text per gaps.a11y.json). This is a deliberate, explicit substitution — not a hallucinated color — but a dedicated 'refunded'/neutral feedback token should be requested from design-system owners.",
+    "color.feedback.warning is reused for 'pending' even though it is semantically a 'warning' token rather than a neutral 'in-progress' token. This is the nearest existing token with verified passing contrast (~5.1:1) and is called out here as a deliberate reuse per gaps.a11y.json guidance, not a silent assumption.",
+    "Row-clickable navigation-loading behavior (isRowNavigating) was not specified in the brief; it was added as a prop-driven state per gaps.states.json recommendation to avoid a hidden internal-only loading state during row-click navigation. Confirm with product whether per-row navigating state is desired or whether navigation should instead be an immediate route change with no interim state."
+  ]
+}

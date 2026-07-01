@@ -17,7 +17,7 @@ regenerates only the defects, leaving the spec untouched.
   passed as an extra instruction: *"Fix ONLY these defects, keep the rest."*
 
 ## Algorithm
-1. Call the Task Tool (switch_mode) to check for missing states & responsive gaps:
+1. Call the Task Tool to create a component files:
 
 - `subagent_type`: `code-generator`
 - `prompt`: "Input data (path to the folder with specification): $ARGUMENTS (+ `fix_list` if `iter > 0`).
@@ -42,4 +42,5 @@ Wait for the agent to complete and save the list of files from its response.
 - **Retry** (≤2): invalid/mismatched JSON → re-prompt with the error.
 - **Abort** if still invalid after retries.
 - **Loop control:** this step runs at most **3** times across the run (initial generation + up to
-  2 repairs); the decision to loop is made by [5-validate](5-validate.md).
+  2 repairs); the decision to loop is made by the `generate-component` orchestrator, using the
+  `tokensOk` / `coverageOk` / `fix_list` reported by [5-validate](5-validate.md).
